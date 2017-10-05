@@ -1,0 +1,123 @@
+
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="panel panel-info">
+                <div class="panel-heading"><a href="{{ url_for('.post', post_id=post.id) }}"><h4>{{ post.title }}</a></h4>
+                </div>
+
+                <div class="panel-body">
+                    {{ post.text | safe }}
+                </div>
+                <div class="panel-footer">by:{{ post.user.username }} 
+                                          on : {{ post.publish_date | deal_time() }}
+                {% if current_user == post.user %}
+                      <a href="{{ url_for('.edit_post', id=post.id) }}" class="btn btn-primary" >    <span class="glyphicon glyphicon-pencil">edit</span>
+                      </a>
+                      <a href="javascript:;" onclick="if(confirm('确定要删除？')){location.href='{{ url_for('.delete_post', id=post.id) }}';}" class="btn btn-danger">
+                      <span class="glyphicon glyphicon-trash"></span>
+                      </a>
+                {% endif %}
+                                        
+                                
+                </div>
+            </div>    
+            
+            
+            <div class="row">
+                <div class="col-lg-2">
+                      <button type="button" class="btn btn-primary" data-toggle="collapse" 
+                            data-target="#demo">
+                        <span class="glyphicon glyphicon-pencil">评论</span>
+                      </button>
+                       
+                  
+                </div>
+            </div>
+            
+            <!-- <button type="button" class="btn btn-primary" data-toggle="collapse" 
+                    data-target="#demo">
+                评论
+            </button>
+            <br>
+            <br>
+            <br> -->
+
+            <div id="demo" class="collapse">
+                {% if current_user.username %}
+                <div class="col-lg-12">
+                    <form method="POST" action="{{ url_for('.post', post_id=post.id) }}">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form.text.label }}
+                            {% if form.text.errors %}
+                                {% for e in form.text.errors %}
+                                    <p class="help-block">{{ e }}</p>
+                                {% endfor %}
+                            {% endif %}
+                            {{ form.text(class_='form-control') }}
+                        </div>
+                        <input class="btn btn-primary" type="submit" value="提交">
+                    </form>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">请先<a href="{{ url_for('main.login') }}">登录</a>
+                </div>
+                {% endif %}
+            </div>
+            
+                <div class="col-lg-12">
+                    {% if comments | length == 0 %}
+                    <p>There are no comments for this post.</p>
+                    {% else %}
+                        {% for comment in comments %}
+                            <div class="panel panel-success">
+                                <!-- <div class="panel-heading">
+                                    <h3 class="panel-title">By: {{ comment.name }} on {{ comment.date }}</h3>
+                                </div> -->
+                                <div class="panel-body">
+                                    
+                                    {{ comment.text }}
+                                
+                                </div>
+                                <div class="panel-footer">By: {{ comment.name }} 
+                                          on : {{ comment.date | deal_time() }}
+                                        
+                                 {% if current_user == comment.user %}
+                                      <!-- <a href="{{ url_for('.edit_post', id=post.id) }}" class="btn btn-primary" >    <span class="glyphicon glyphicon-pencil">edit</span>
+                                      </a> -->
+                                      <a href="javascript:;" onclick="if(confirm('确定要删除？')){location.href='{{ url_for('.delete_comment', id=comment.id) }}';}">
+                                      <span class="glyphicon glyphicon-trash"></span>
+                                      </a>
+                                {% endif %}
+                                </div>
+                            </div>
+                            
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+       <!--  <div class="col-lg-3">
+            <div class="row">
+                <h5>近期文章 </h5>
+                <ul>
+                    {% for post in recent %}
+                        <li><a href="{{ url_for('.post', post_id=post.id) }}" style="color: yellow">{{ post.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="row">
+                <h5>热门标签</h5>
+                <ul>
+                    {% for tag in top_tags %}
+                        <li><a href="{{ url_for('.tag', tag_name=tag[0].title) }}" style="color: yellow">{{ tag[0].title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div> -->
+    </div>
+{% endblock %}

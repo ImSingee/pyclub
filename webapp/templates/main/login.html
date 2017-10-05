@@ -1,0 +1,39 @@
+{% extends "base.html" %}{# 继承模板 #}
+{% block title %} login {% endblock %}{# 修改替换 #}
+{% block body %}
+<div class="col-lg-12">
+  <ul class="nav nav-tabs">
+      <li    class="active">
+          <a href="{{ url_for('main.login') }}">登录</a>
+      </li>
+      <li>
+          <a href="{{ url_for('main.register') }}">注册</a>
+      </li>
+  </ul>
+
+  <form method="POST" action="{{ url_for('main.login')}}"> {# url_for返回视图函数名字对应url #}
+    {{ form.hidden_tag() }}<!--自动加入预防跨站请求的伪造机制-->
+    <div class="from_group">
+      {{ form.username.label }}
+      {% if form.username.errors %}
+        {% for e in form.username.errors %}
+        <p class="help-block">{{ e }}</p><!--验证失败提示-->
+        {% endfor %}
+      {% endif %}
+      {{ form.username(class_="form-control") }}<!--画出name区域-->
+     </div>
+     <div class="from_group">
+      {{ form.password.label }}
+      {% if form.password.errors %}
+        {% for e in form.password.errors %}
+        <p class="help-block">{{ e }}</p><!--验证失败提示-->
+        {% endfor %}
+      {% endif %}
+      {{ form.password(class_="form-control") }}<!--画出text区域-->
+     </div>
+     <input id="login" class="btn btn-primary" type="submit" value="登录" >
+  </form>
+  <br>
+  <br>
+</div>
+{% endblock %}

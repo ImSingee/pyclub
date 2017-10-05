@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}动态首页{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-lg-9">
+            {% for post in tops.items %}
+                <div class="panel panel-success">
+                    <div class="panel-heading"><a href="{{ url_for('.post', post_id=post.id) }}"><h4>【置顶】  {{ post.title }}</a></h4></div>
+
+                    <div class="panel-body">
+                        {{ post.text | truncate(250) | delete_html() }}
+
+                        <a href="{{ url_for('.post', post_id=post.id) }}">查看>></a>
+                    </div>
+                    <div class="panel-footer">
+                    {% if post.user.nick_name != None %}
+                        <a href="{{ url_for('.base_user_inform', username=post.user.username) }}">
+                        by:{{ post.user.nick_name }}
+                       </a>
+                    {% else %}
+                        <a href="{{ url_for('.base_user_inform', username=post.user.username) }}">
+                        by:{{ post.user.username }}
+                        </a>
+                    {% endif %} 
+                      on : {{ post.publish_date | deal_time() }}
+                    follow : {{ post.comments.order_by(Comment.date.desc()).all() | length }}
+                                    
+                    </div>
+                </div>    
+            {% endfor %}
+        </div>
+
+        <div class="col-lg-9">
+            {% for post in posts.items %}
+                <div class="panel panel-info">
+                    <div class="panel-heading"><a href="{{ url_for('.post', post_id=post.id) }}"><h4>{{ post.title }}</a></h4></div>
+
+                    <div class="panel-body">
+                        {{ post.text | truncate(250) | delete_html() }}
+
+                        <a href="{{ url_for('.post', post_id=post.id) }}">查看>></a>
+                    </div>
+                    <div class="panel-footer">
+                    {% if post.user.nick_name != None %}
+                        <a href="{{ url_for('.base_user_inform', username=post.user.username) }}">
+                        by:{{ post.user.nick_name }}
+                       </a>
+                    {% else %}
+                        <a href="{{ url_for('.base_user_inform', username=post.user.username) }}">
+                        by:{{ post.user.username }}
+                        </a>
+                    {% endif %} 
+                      on : {{ post.publish_date | deal_time() }}
+                    follow : {{ post.comments.order_by(Comment.date.desc()).all() | length }}
+                                    
+                    </div>
+                </div>    
+            {% endfor %}
+        </div>
+
+<!--         <div class="col-lg-9">
+            {% for post in posts.items %}
+                <div>
+                    <div class="col-lg-12"><a href="{{ url_for('.post', post_id=post.id) }}"><h4>{{ post.title }}</a></h4></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        {{ post.text | truncate(500) | delete_html() }}
+
+                        <a href="{{ url_for('.post', post_id=post.id) }}">查看>></a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div> -->
+        <!-- <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">面板标题</h3>
+            </div>
+            <div class="panel-body">
+                这是一个基本的面板
+            </div>
+        </div> -->
+        
+        <div class="col-lg-3">
+            <!-- <div class="row">
+                <h5>新贴</h5>
+                <ul>
+                    {% for post in recent %}
+                        <li><a href="{{ url_for('.post', post_id=post.id) }}">{{ post.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div> -->
+            {# 
+            <div class="row">
+                <h5><span class="glyphicon glyphicon-fire"></span>Hot</h5>
+                <ul>
+                    {% for tag in top_tags %}
+                        <li><a href="{{ url_for('.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            #}
+        </div>
+    </div>
+
+    {{ render_pagination(posts, '.home') }}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
