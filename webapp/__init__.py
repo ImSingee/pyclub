@@ -5,9 +5,12 @@ from flask import Flask, redirect, url_for
 
 from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost, Note,InviteCode
 
+from webapp.models import Practice, AnswerComment, Answer
+
 from webapp.controllers.tiezi import tiezi_blueprint
 from webapp.controllers.main import main_blueprint
 from webapp.controllers.glinks import glinks_blueprint
+from webapp.controllers.practice import practice_blueprint_
 
 from webapp.extensions import (bcrypt,admin)
 from webapp.config import DevConfig
@@ -20,6 +23,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 
 from .models import db, Role, Post,Comment
+
 from .controllers.admin import (
     CustomView,
     CustomModelView,
@@ -119,6 +123,8 @@ def create_app(object_name):
             GLink, db.session, category='Models'
         )
     )
+
+
     admin.add_view(
         CustomFileAdmin(
             os.path.join(os.path.dirname(__file__), 'static'),
@@ -126,13 +132,29 @@ def create_app(object_name):
             name='Static Files'
         )
     )
-
+    
+    admin.add_view(
+        CustomModelView(
+            Practice, db.session, category='Models'
+        )
+    )
+    admin.add_view(
+        CustomModelView(
+            AnswerComment, db.session, category='Models'
+        )
+    )
+    admin.add_view(
+        CustomModelView(
+            Answer, db.session, category='Models'
+        )
+    )
 
 
     #蓝图注册
     app.register_blueprint(tiezi_blueprint)
     app.register_blueprint(main_blueprint)
     app.register_blueprint(glinks_blueprint)
+    app.register_blueprint(practice_blueprint_)
     
     @app.route('/')
     def index():

@@ -7,6 +7,9 @@ from flask_migrate import Migrate, MigrateCommand
 from webapp import create_app
 from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost,InviteCode
 
+from webapp.models import Practice, AnswerComment, Answer
+
+
 from gevent.wsgi import WSGIServer
 from robot import robot_run
 
@@ -34,7 +37,15 @@ manager.add_command("db", MigrateCommand)
 
 @manager.shell
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Post=Post, Tag=Tag, Comment=Comment, Role=Role,InviteCode=InviteCode)
+    return dict(app=app, db=db, User=User,
+     Post=Post, Tag=Tag, Comment=Comment,
+      Role=Role,InviteCode=InviteCode,
+      Answer=Answer,
+      AnswerComment=AnswerComment,
+      Practice=Practice
+
+
+      )
 #=================================================
 
 #初始化数据库
@@ -87,6 +98,24 @@ def setup_db_test():
         new_post.published_date = datetime.datetime.now()
         new_post.is_top = True
         db.session.add(new_post)
+
+    #创建几个练习
+    for i in range(100):
+        new_pracice = Practice("Practice{}".format(i))
+        new_pracice.user= admin
+        new_pracice.text = "this is practice"
+        new_pracice.dynamic_date = datetime.datetime.now()
+        new_pracice.published_date = datetime.datetime.now()
+        db.session.add(new_pracice)
+    
+    #创建几篇置顶练习
+    for i in range(101, 115):
+        new_pracice = Practice("Practice{}".format(i))
+        new_pracice.user= admin
+        new_pracice.text = "this is top practice"
+        new_pracice.dynamic_date = datetime.datetime.now()
+        new_pracice.published_date = datetime.datetime.now()
+        db.session.add(new_pracice)
 
     db.session.commit()
 

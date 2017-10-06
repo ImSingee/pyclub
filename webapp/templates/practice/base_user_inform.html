@@ -1,0 +1,119 @@
+
+{% extends "base.html" %}
+{% block title %}user inform{% endblock %}
+{% block body %}
+    
+    <div class="row">
+        <div class="col-lg-9">
+            <button type="button" class="btn btn-default btn-xs">
+                <span class="glyphicon glyphicon-user"></span>{{ current_user.username }}
+            </button>
+            <br>
+            <br>
+
+            <ul class="list-group">
+              <h4>name</h4>
+              <li class="list-group-item">{{ user.nick_name }}</li>
+              <br>
+              <h4>专业&学历&入学年份</h4>
+              <li class="list-group-item">{{ user.class_major }}</li>
+              <br>
+              <h4>Description</h4>
+              <li class="list-group-item">{{ user.description }}</li>
+              <br>
+              <h4>blog URL</h4>
+              {% if user.blog_addr == "http://" %}
+                  <li class="list-group-item">None</li>
+              {% else %}
+                  <li class="list-group-item"><a href="{{ user.blog_addr }}">{{ user.blog_addr }}</a></li>
+              {% endif %}
+              
+              <br>
+              <h4>github URL</h4>
+              {% if user.github_addr == "https://github.com/" %}
+                  <li class="list-group-item">None</li>
+              {% else %}
+                  <li class="list-group-item"><a href="{{ user.github_addr }}">{{ user.github_addr }}</a></li>
+              {% endif %}
+              <br>
+
+            </ul>
+
+            <hr>
+
+            
+        </div>
+    </div>
+
+    
+			
+	</form>
+
+
+
+{% endblock %}
+
+<!-- <div class="column two-thirds">
+      <dl class="form-group">
+          <dt><label for="user_profile_name">昵称</label></dt>
+          <dd><input class="form-control" id="user_profile_name" name="user[profile_name]" size="30" type="text" value="dd" /></dd>
+      </dl>
+      <dl class="form-group">
+        <dt><label  for="user_profile_email">Public email</label></dt>
+        <dd>
+            <select class="form-select select" id="user_profile_email" name="user[profile_email]"><option value="">Select a verified email to display</option>
+            <option value="547780662@qq.com" selected="selected">547780662@qq.com</option></select>
+            <p class="note">You can manage verified 
+              email addresses in your <a href="/settings/emails">email settings</a>.
+            </p>
+        </dd>
+      </dl>
+      <dl class="form-group">
+        <dt><label for="user_profile_bio">Bio</label></dt>
+        <dd class="user-profile-bio-field-container js-suggester-container js-length-limited-input-container">
+          <textarea class="form-control user-profile-bio-field js-suggester-field js-length-limited-input" cols="40" data-input-max-length="160" data-warning-text="{{remaining}} remaining" id="user_profile_bio" name="user[profile_bio]" placeholder="Tell us a little bit about yourself" rows="20">
+          Persistence and determination alone is omnipotent.</textarea>
+          <p class="note">
+            You can <strong>@mention</strong> other users and
+            organizations to link to them.
+          </p>
+          <p class="js-length-limited-input-warning user-profile-bio-message d-none"></p>
+          <div class="suggester-container">
+            <div class="suggester js-suggester js-navigation-container"
+                 data-url="/autocomplete/user-suggestions">
+            </div>
+          </div>
+        </dd>
+      </dl>
+      <dl class="form-group">
+        <dt><label for="user_profile_">URL</label></dt>
+        <dd><input class="form-control" id="user_profile_" name="user[profile_]" size="30" type="url" value="www.zhuojiayuan.com" /></dd>
+      </dl>
+        <dl class="form-group">
+          <dt><label for="user_profile_company">Company</label></dt>
+          <dd class="user-profile-company-field-container js-suggester-container">
+            <input autocomplete="off" class="form-control js-suggester-field" id="user_profile_company" name="user[profile_company]" size="30" type="text" value="" />
+            <p class="note">
+              You can <strong>@mention</strong> your company's GitHub
+              organization to link it.
+            </p>
+            <div class="suggester-container">
+              <div class="suggester js-suggester js-navigation-container"
+                   data-url="/autocomplete/organizations">
+              </div>
+            </div>
+          </dd>
+        </dl>
+      <hr>
+      <dl class="form-group">
+        <dt><label for="user_profile_location">Location</label></dt>
+        <dd><input class="form-control" id="user_profile_location" name="user[profile_location]" size="30" type="text" value="" /></dd>
+      </dl>
+      <p><button type="submit" class="btn btn-primary">Update profile</button></p>
+    </div>
+</form> 
+       
+    <p class="note">
+      We store your personal data in the United States. See our <a href="https://github.com/site/privacy">privacy policy</a> for more information.
+    </p>
+ -->

@@ -25,6 +25,15 @@ class User(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
+    nick_name = db.Column(db.String(255))
+    class_major = db.Column(db.String(255))
+    description = db.Column(db.Text()) 
+
+    blog_addr = db.Column(db.String(255))
+    github_addr = db.Column(db.String(255))
+
+
+    #===========================
     #一个虚拟的列，与Post对象的外键约束建立联系
     #这样就不用再设置一个column,引用外部的即可
     posts = db.relationship('Post',
@@ -45,12 +54,19 @@ class User(db.Model):
                              backref='user', 
                              lazy='dynamic')
 
-    nick_name = db.Column(db.String(255))
-    class_major = db.Column(db.String(255))
-    description = db.Column(db.Text()) 
+    practices = db.relationship('Practice',
+                             backref='user', 
+                             lazy='dynamic')
 
-    blog_addr = db.Column(db.String(255))
-    github_addr = db.Column(db.String(255))
+    answers = db.relationship('Answer',
+                             backref='user', 
+                             lazy='dynamic')
+
+    answer_comments = db.relationship('AnswerComment',
+                         backref='user', 
+                         lazy='dynamic')
+    #===================================
+
 
 
     # def __init__(self, username):
@@ -252,7 +268,72 @@ class InviteCode(db.Model):
 
 
 
-        
+#==========================
+#练习专区
+
+class Practice(db.Model):
+
+    id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String(255))
+    is_top = db.Column(db.Boolean()) 
+    text = db.Column(db.Text())
+    publish_date = db.Column(db.DateTime())
+
+    # anonymous = db.Column(db.Boolean())
+    
+    dynamic_date = db.Column(db.DateTime())
+    #外键约束，强制要求user_id的字段的 值 存在于user表的 id列 中
+    #保证每个post对象都会有一个可以对应的user
+    user_id = db.Column(db.Integer(),
+                        db.ForeignKey('user.id'))
+
+    answers = db.relationship('Answer',
+                               backref='practice',
+                              lazy='dynamic')
+
+
+    def __init__(self, title):
+        self.title = title
+        self.is_top = False
+
+
+    def __repr__(self):
+        return "<Practice '{}'>".format(self.title)
+
+
+class Answer(db.Model):
+
+    id = db.Column(db.Integer(), primary_key=True)
+
+    name = db.Column(db.String(255))
+    user_id = db.Column(db.Integer(),
+                        db.ForeignKey('user.id')) 
+    text = db.Column(db.Text())
+    date = db.Column(db.DateTime())
+    practice_id = db.Column(db.Integer(),
+                        db.ForeignKey('practice.id'))
+
+    def __repr____(self):
+        return "<Answer'{}'>".format(self.text[:15])
+
+
+class AnswerComment(db.Model):
+
+    id = db.Column(db.Integer(), primary_key=True)
+
+    name = db.Column(db.String(255))
+    user_id = db.Column(db.Integer(),
+                        db.ForeignKey('user.id')) 
+    text = db.Column(db.Text())
+    date = db.Column(db.DateTime())
+    answer_id = db.Column(db.Integer(),
+                        db.ForeignKey('answer.id'))
+    def __repr____(self):
+        return "<AnswerComment'{}'>".format(self.text[:15])
+
+
+
+      
 if __name__ == '__main__':
     db.create_all()
             
