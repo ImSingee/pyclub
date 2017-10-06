@@ -1,6 +1,7 @@
 
 
 import os
+import re
 from flask import Flask, redirect, url_for
 
 from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost, Note,InviteCode
@@ -38,7 +39,7 @@ from .controllers.admin import (
 #==========================================================
 #一个app包含配置，扩展初始化，index路由处理，蓝图注册
 #====================================================
-
+#过滤器记得下方添加进去
 #过滤器
 def delete_html(string=None):
     
@@ -53,6 +54,13 @@ def deal_time(deal_time=None):
     string = ':'.join(strings)
     
     return string
+
+def get_text(string=None):
+    reg = r'>(.*?)</'
+    pattern = re.compile(reg)
+    result = pattern.findall(string)
+    text = " ".join(result)
+    return text
 
 def create_app(object_name):
 
@@ -177,6 +185,7 @@ def create_app(object_name):
     #添加过滤器
     app.jinja_env.filters['delete_html']=delete_html
     app.jinja_env.filters['deal_time']=deal_time
+    app.jinja_env.filters['get_text']=get_text
     return app
 
 
