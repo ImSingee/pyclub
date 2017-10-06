@@ -11,32 +11,36 @@
                 <div class="panel-body">
                     {{ practice.text | safe }}
                 </div>
-                {# 
+                
                 <div class="panel-footer">by:{{ practice.user.username }} 
                                           on : {{ practice.publish_date | deal_time() }}
                 {% if current_user == practice.user %}
-                      <a href="{{ url_for('.edit_practice', id=practice.id) }}" class="btn btn-primary" >    <span class="glyphicon glyphicon-pencil">edit</span>
+                     <a href="{{ url_for('.edit_practice', id=practice.id) }}" class="btn btn-primary" >    <span class="glyphicon glyphicon-pencil">edit</span>
                       </a>
                       <a href="javascript:;" onclick="if(confirm('确定要删除？')){location.href='{{ url_for('.delete_practice', id=practice.id) }}';}" class="btn btn-danger">
                       <span class="glyphicon glyphicon-trash"></span>
                       </a>
                 {% endif %}                                   
                 </div>
-                #}
+                
              
             </div>    
             
             
             <div class="row">
                 <div class="col-lg-2">
-                      <button type="button" class="btn btn-primary" data-toggle="collapse" 
+                      <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" 
                             data-target="#demo">
-                        <span class="glyphicon glyphicon-pencil">评论</span>
-                      </button>
-                       
+                        <span class="glyphicon glyphicon-pencil">回答</span>
+
+                      </button>                   
                   
                 </div>
             </div>
+            <br>
+            <br>
+
+
             
             <!-- <button type="button" class="btn btn-primary" data-toggle="collapse" 
                     data-target="#demo">
@@ -49,7 +53,7 @@
             <div id="demo" class="collapse">
                 {% if current_user.username %}
                 <div class="col-lg-12">
-                    <form method="practice" action="{{ url_for('.practice', practice_id=practice.id) }}">
+                    <form method="post" action="{{ url_for('.practice', practice_id=practice.id) }}">
                         {{ form.hidden_tag() }}
                         <div class="form-group">
                             {{ form.text.label }}
@@ -58,7 +62,7 @@
                                     <p class="help-block">{{ e }}</p>
                                 {% endfor %}
                             {% endif %}
-                            {{ form.text(class_='form-control') }}
+                            {{ form.text(id="editor", class_='form-control') }}
                         </div>
                         <input class="btn btn-primary" type="submit" value="提交">
                     </form>
@@ -74,34 +78,51 @@
                     <p>该练习还没有人提交解答.</p>
                     {% else %}
                         {% for answer in answers %}
-                            <div class="panel panel-success">
-                                <!-- <div class="panel-heading">
-                                    <h3 class="panel-title">By: {{ answer.name }} on {{ answer.date }}</h3>
-                                </div> -->
-                                <div class="panel-body">
-                                    
-                                    {{ answer.text }}
-                                
+                            <div class="panel panel-warning">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" 
+                                           href="#{{ answer.id }}" >
+
+                                            {{ answer.text | truncate(250) | get_text}}
+                                        <button type="button" class="btn btn-default btn-sm">
+                                            <span class="glyphicon glyphicon-sort"></span> 
+                                        </button>
+                                        </a>
+                                    </h4>
                                 </div>
-                                <div class="panel-footer">By: {{ answer.name }} 
+                                <div id="{{ answer.id }}" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                    {{ answer.text | safe }}
+
+                                    </div>
+                                </div>
+                               <div class="panel-footer">By: {{ answer.name }} 
                                           on : {{ answer.date | deal_time() }}
-                                        
+                                         
                                  {% if current_user == answer.user %}
-                                      <!-- <a href="{{ url_for('.edit_practice', id=practice.id) }}" class="btn btn-primary" >    <span class="glyphicon glyphicon-pencil">edit</span>
-                                      </a> -->
+                                     <a href="{{ url_for('.edit_answer', id=answer.id) }}">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                      </a>
                                       <a href="javascript:;" onclick="if(confirm('确定要删除？')){location.href='{{ url_for('.delete_answer', id=answer.id) }}';}">
                                       <span class="glyphicon glyphicon-trash"></span>
                                       </a>
                                 {% endif %}
-                                </div>
+                                
+                                </div> 
                             </div>
+                            <hr>
+
                             
                         {% endfor %}
                     {% endif %}
                 </div>
             </div>
         </div>
-        
+
+
+
+
        <!--  <div class="col-lg-3">
             <div class="row">
                 <h5>近期文章 </h5>
@@ -122,3 +143,8 @@
         </div> -->
     </div>
 {% endblock %}
+{% block js %} 
+<script type="text/javascript" src="/static/ckeditor/ckeditor.js"></script>
+<script>editor=CKEDITOR.replace('editor');</script>
+{% endblock %}
+{# 注意一下静态文件的路径 #}

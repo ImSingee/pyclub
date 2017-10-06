@@ -96,10 +96,11 @@ def home(page=1):
 #===============================================================
 #练习的具体页面
 
-@practice_blueprint_.route('/practice/<int:practice_id>',methods=['GET','POST'])
+@practice_blueprint_.route('/practice/<int:practice_id>', methods=['GET','POST'])
 def practice(practice_id):
 
     form = AnswerForm()
+    print(form.validate_on_submit())
     if form.validate_on_submit():
         new_answer = Answer()
         new_answer.name = current_user.username
@@ -115,7 +116,7 @@ def practice(practice_id):
     answers = practice.answers.order_by(Answer.date.desc()).all()
 
     #一些侧边栏
-    not_viewed_inform_num = get_not_viewed_inform_num()
+    not_viewed_inform_num = get_not_viewed_inform_num() 
     note = get_note()
 
     return render_template(
@@ -127,7 +128,88 @@ def practice(practice_id):
         not_viewed_inform_num=not_viewed_inform_num,
         note=note
         )
+#====================================================================
+#删除函数
+@practice_blueprint_.route('/delete_practice/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_practice(id):
+    practice = Practice.query.get_or_404(id)
+    permission = Permission(UserNeed(practice.user.id))
+    if permission.can() or admin_permission.can():
+        db.session.delete(practice)
+        db.session.commit()
+        return redirect(url_for('practice_.home'))
+    abort(403)
+
+@practice_blueprint_.route('/delete_answer/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_answer(id):
+    answer = Answer.query.get_or_404(id)
+    practice_id = answer.practice_id
+    permission = Permission(UserNeed(answer.user.id))
+    if permission.can() or admin_permission.can():
+        db.session.delete(answer)
+        db.session.commit()
+        return redirect(url_for('practice_.practice', practice_id=practice_id))
+    abort(403)
+
 #==============================================================
+#几个编辑函数
+#一个只希望文章作者能够访问的页面
+@practice_blueprint_.route('/edit_practice/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_practice(id):
+    practice = Practice.query.get_or_404(id)
+    permission = Permission(UserNeed(practice.user.id))
+    if permission.can() or admin_permission.can():
+        form = PracticeForm()
+
+        if form.validate_on_submit():
+            practice.title = form.title.data
+            practice.text = form.text.data
+            practice.publish_date = datetime.datetime.now()
+
+            db.session.add(practice)
+            db.session.commit()
+
+            return redirect(url_for('.edit_practice', id=practice.id))
+        form.text.data = practice.text
+        note = get_note()
+        not_viewed_inform_num = get_not_viewed_inform_num()
+        return render_template('edit_practice.html',
+                                form=form,
+                                practice=practice,
+                                note=note,
+                                not_viewed_inform_num=not_viewed_inform_num
+                                )
+    abort(403)
+
+@practice_blueprint_.route('/edit_answer/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_answer(id):
+    answer = Answer.query.get_or_404(id)
+    permission = Permission(UserNeed(answer.user.id))
+    if permission.can() or admin_permission.can():
+        form = AnswerForm()
+
+        if form.validate_on_submit():
+            answer.text = form.text.data
+            answer.publish_date = datetime.datetime.now()
+            db.session.add(answer)
+            db.session.commit()
+
+            return redirect(url_for('.edit_answer', id=answer.id))
+        form.text.data = answer.text
+        note = get_note()
+        not_viewed_inform_num = get_not_viewed_inform_num()
+        return render_template('edit_answer.html',
+                                form=form,
+                                answer=answer,
+                                note=note,
+                                not_viewed_inform_num=not_viewed_inform_num
+                                )
+    abort(403)
+
 # @practice_blueprint_.route('/new_practice', methods=['GET', 'POST'])
 # @login_required
 # #@poster_permission.require(http_exception=403)
@@ -290,37 +372,7 @@ def practice(practice_id):
 
 # #============================================
 
-# #10一个只希望文章作者能够访问的页面
-# @practice_blueprint_.route('/edit/<int:id>', methods=['GET', 'POST'])
-# @login_required
-# #@poster_permission.require(http_exception=403)
-# def edit_post(id):
-#     post = Post.query.get_or_404(id)
-#     permission = Permission(UserNeed(post.user.id))
 
-#     #我们希望管理员可以修改任何文章
-#     if permission.can() or admin_permission.can():
-#         form = PostForm()
-
-#         if form.validate_on_submit():
-#             post.title = form.title.data
-#             post.text = form.text.data
-#             post.publish_date = datetime.datetime.now()
-
-#             db.session.add(post)
-#             db.session.commit()
-
-#             return redirect(url_for('.edit_post', id=post.id))
-#         form.text.data = post.text
-#         note = get_note()
-#         not_viewed_inform_num = get_not_viewed_inform_num()
-#         return render_template('edit.html',
-#                                 form=form,
-#                                 post=post,
-#                                 note=note,
-#                                 not_viewed_inform_num=not_viewed_inform_num
-#                                 )
-#     abort(403)
 
 
 # #

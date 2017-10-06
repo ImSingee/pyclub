@@ -1,7 +1,11 @@
 
 #定义输入域
 #====================================
-from flask_wtf import Form
+try:
+    import FlaskForm
+except:
+    from flask_wtf import Form
+
 from webapp.models import User, db,InviteCode
 #=========================
 

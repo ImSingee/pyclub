@@ -55,10 +55,10 @@ def deal_time(deal_time=None):
     
     return string
 
-def get_text(string=None):
+def get_text(html=None):
     reg = r'>(.*?)</'
     pattern = re.compile(reg)
-    result = pattern.findall(string)
+    result = pattern.findall(html)
     text = " ".join(result)
     return text
 
