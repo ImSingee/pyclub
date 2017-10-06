@@ -87,14 +87,14 @@ class LoginForm(Form):
         
         if not user:
             self.username.errors.append(
-                              'Invalid username or password'
+                              "无效的账号或者密码"
                               )
             return False
 
         #检验密码是否匹配
         if not user.check_password(self.password.data):
             self.username.errors.append(
-                'Invalid username or password'
+                "无效的账号或者密码"
                  )
             return False
         return True
@@ -145,3 +145,19 @@ class AdminRegisterForm(Form):
             return False
         return True
 
+#练习
+class AnswerForm(Form): 
+ 
+    text = TextAreaField(u'试一试', validators=[DataRequired()])
+
+
+
+class PracticeForm(Form):
+
+    title = StringField(u'练习概要', [DataRequired(), Length(max=255)])
+
+    text = TextAreaField(u'练习内容', [DataRequired()])
+
+class AnswerCommentForm(Form): 
+ 
+    text = TextAreaField(u'评论', validators=[DataRequired()])

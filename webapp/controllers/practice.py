@@ -5,7 +5,7 @@ from os import path
 from sqlalchemy import func
 from flask import render_template, Blueprint
 from webapp.models import db, Post, Tag, Comment, User, tags, GLink, RelatedPost, Note
-from webapp.forms import CommentForm, PostForm, UserForm
+from webapp.forms import AnswerForm, PracticeForm, AnswerCommentForm
 from flask import redirect, url_for
 from flask import g, session, abort
 from flask_login import login_required, current_user
@@ -94,6 +94,40 @@ def home(page=1):
         note=note
     )
 #===============================================================
+#练习的具体页面
+
+@practice_blueprint_.route('/practice/<int:practice_id>',methods=['GET','POST'])
+def practice(practice_id):
+
+    form = AnswerForm()
+    if form.validate_on_submit():
+        new_answer = Answer()
+        new_answer.name = current_user.username
+        new_answer.user_id = current_user.id
+        new_answer.text = form.text.data
+        now = datetime.datetime.now()
+        new_answer.date = now
+        new_answer.practice_id = practice_id
+        db.session.add(new_answer)
+        db.session.commit()
+
+    practice = Practice.query.get_or_404(practice_id)
+    answers = practice.answers.order_by(Answer.date.desc()).all()
+
+    #一些侧边栏
+    not_viewed_inform_num = get_not_viewed_inform_num()
+    note = get_note()
+
+    return render_template(
+        'practice.html',
+        g=g,
+        practice=practice,
+        answers=answers,
+        form=form,
+        not_viewed_inform_num=not_viewed_inform_num,
+        note=note
+        )
+#==============================================================
 # @practice_blueprint_.route('/new_practice', methods=['GET', 'POST'])
 # @login_required
 # #@poster_permission.require(http_exception=403)
@@ -171,95 +205,6 @@ def home(page=1):
 #                             note=note)
 
 # #================================================================
-# #文章页面
-
-
-@practice_blueprint_.route('/practice/<int:practice_id>',methods=['GET','POST'])
-def practice(practice_id):
-    return "practice_id %s" % practice_id
-    # form = CommentForm() # 实例化一个前面定义的CommentForm()对象
-    # if form.validate_on_submit():
-    #     new_comment = Comment()  # 实例化一个Comment对象
-    #     new_comment.name = current_user.username#form.name.data  # 读取表单数据，修改Comment对象属性
-    #     new_comment.user_id = current_user.id
-    #     new_comment.text = form.text.data  #
-    #     now = datetime.datetime.now()
-    #     new_comment.date = now
-    #     new_comment.post_id = post_id
-        
-    #     Post.query.filter_by(id=post_id).update({'dynamic_date' : now})
-    #     db.session.add(new_comment)
-    #     db.session.commit()
-
-    #     #将当前用户与该文章关联
-    #     exit = RelatedPost.query.filter_by(post_id=post_id,
-    #                                    user_id=current_user.id)
-    #     if not exit.all():
-    #         new_related_post = RelatedPost()
-    #         new_related_post.post_id = post_id
-    #         new_related_post.user_id = current_user.id
-    #         new_related_post.viewed_date = now
-    #         db.session.add(new_related_post)
-    #         db.session.commit()
-    #     else:
-    #         exit.update({'is_viewed' : False})
-    #         exit.update({'viewed_date' : now})
-    #         db.session.add_all(exit)
-    #         db.session.commit()
-
-
-
-        
-    #     #一旦新加评论，该篇文章用户都将视为未读过此帖子
-    #     related_posts = RelatedPost.query.filter_by(post_id=post_id)
-    #     if related_posts:
-    #         related_posts.update({'is_viewed' : False})
-    #         db.session.add_all(related_posts)
-
-    #         #但是除了自己之外
-    #         my_rel_post = RelatedPost.query.filter_by(post_id=post_id,user_id=current_user.id)
-    #         my_rel_post.update({'is_viewed' : True})
-    #         db.session.add_all(my_rel_post)
-
-    #         db.session.commit()
-
-   
-
-    # post = Post.query.get_or_404(post_id)
-    # #username = User.query.filter_by(id=post.user_id).one().username 
-    # tags = post.tags
-    
-    # comments = post.comments.order_by(Comment.date.desc()).all()
-    # recent, top_tags = sidebar_data()
-    # not_viewed_inform_num = get_not_viewed_inform_num()
-    # note=get_note()
-    # try:
-    #     if current_user.id:
-    #         try:
-
-    #             related_posts = RelatedPost.query.filter_by(user_id=current_user.id,
-    #                                                        post_id=post_id)
-    #             if related_posts:
-    #                 related_posts.update({'viewed_date' : datetime.datetime.now()})
-    #                 related_posts.update({'is_viewed' : True})
-    #                 db.session.add(related_posts.one())
-    #                 db.session.commit()
-    #         except Exception as e:
-    #             print(e)
-    # except:
-    #     pass
-    # return render_template(
-    #     'post.html',
-    #     g=g,
-    #     post=post,
-    #     tags=tags,
-    #     comments=comments,
-    #     recent=recent,
-    #     top_tags=top_tags,
-    #     form=form,
-    #     not_viewed_inform_num=not_viewed_inform_num,
-    #     note=note
-    #     )#传入表单对象
 
 # #=================================================
 # #文章标签
