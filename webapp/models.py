@@ -313,6 +313,10 @@ class Answer(db.Model):
     practice_id = db.Column(db.Integer(),
                         db.ForeignKey('practice.id'))
 
+    answer_comments = db.relationship('AnswerComment',
+                               backref='answer',
+                              lazy='dynamic')
+
     def __repr____(self):
         return "<Answer'{}'>".format(self.text[:15])
 

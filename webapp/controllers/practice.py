@@ -40,17 +40,16 @@ def sidebar_data():
 
 
 def get_note():
-    return "test"
-    # try:
-    #     note = Note.query.order_by(Note.publish_date.desc()).limit(1).one()
-    #     return note
-    # except:
-    #     note = Note()
-    #     note.text = "no message"
-    #     note.publish_date = datetime.datetime.now()
-    #     db.session.add(note)
-    #     db.session.commit()
-    #     get_note()
+    try:
+        note = Note.query.order_by(Note.publish_date.desc()).limit(1).one()
+        return note
+    except:
+        note = Note()
+        note.text = "no message"
+        note.publish_date = datetime.datetime.now()
+        db.session.add(note)
+        db.session.commit()
+        get_note()
 #==============================================================
 #2博客 蓝图实例
 #由于practice与内置的某个函数名字冲突不得已都加个下划线
@@ -100,7 +99,6 @@ def home(page=1):
 def practice(practice_id):
 
     form = AnswerForm()
-    print(form.validate_on_submit())
     if form.validate_on_submit():
         new_answer = Answer()
         new_answer.name = current_user.username
@@ -112,22 +110,44 @@ def practice(practice_id):
         db.session.add(new_answer)
         db.session.commit()
 
+
     practice = Practice.query.get_or_404(practice_id)
     answers = practice.answers.order_by(Answer.date.desc()).all()
 
     #一些侧边栏
     not_viewed_inform_num = get_not_viewed_inform_num() 
     note = get_note()
+    
+    answer_comment_form = AnswerCommentForm()
 
     return render_template(
         'practice.html',
         g=g,
         practice=practice,
         answers=answers,
+        answer_comment_form=answer_comment_form,
         form=form,
         not_viewed_inform_num=not_viewed_inform_num,
         note=note
         )
+#====================================================================
+#给解答添加评论
+@practice_blueprint_.route('/add_answer_comment/<int:answer_id>', methods=['GET','POST'])
+def add_answer_comment(answer_id):
+    answer_comment_form = AnswerCommentForm()
+    if answer_comment_form.validate_on_submit():
+        new_answer_comment = AnswerComment()
+        new_answer_comment.name = current_user.username
+        new_answer_comment.user_id = current_user.id
+        new_answer_comment.text = answer_comment_form.text.data
+        now = datetime.datetime.now()
+        new_answer_comment.date = now
+        new_answer_comment.answer_id = answer_id
+        db.session.add(new_answer_comment)
+        db.session.commit()
+    practice_id = Answer.query.filter_by(id=answer_id).one().practice_id
+    return redirect(url_for('practice_.practice', practice_id=practice_id))
+
 #====================================================================
 #删除函数
 @practice_blueprint_.route('/delete_practice/<int:id>', methods=['GET', 'POST'])
@@ -155,7 +175,6 @@ def delete_answer(id):
 
 #==============================================================
 #几个编辑函数
-#一个只希望文章作者能够访问的页面
 @practice_blueprint_.route('/edit_practice/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_practice(id):
@@ -209,6 +228,7 @@ def edit_answer(id):
                                 not_viewed_inform_num=not_viewed_inform_num
                                 )
     abort(403)
+#================================================================================
 
 # @practice_blueprint_.route('/new_practice', methods=['GET', 'POST'])
 # @login_required
