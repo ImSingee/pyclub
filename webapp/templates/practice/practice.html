@@ -27,7 +27,7 @@
 {% endmacro %}
 
 
-{% extends "practice_base.html" %}
+{% extends "base.html" %}
 {% block title %}{{ practice.title }}{% endblock %}
 {% block body %}
     <div class="row">
@@ -155,8 +155,9 @@
                                 <div id="{{ answer.id }}test" class="collapse">
 
                                     {% for answer_comment in answer.answer_comments %}
-                                    <div class="row"> 
-                                      <span>{{ answer_comment.user.username }}</span>
+                                    <div class="row">
+                                      <span class="glyphicon glyphicon-user"></span> 
+                                       {{ answer_comment.user.username }}
                                       <span> : </span>
                                       <span>{{ answer_comment.text }}</span>
                                       <hr>

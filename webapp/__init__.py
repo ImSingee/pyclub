@@ -132,14 +132,14 @@ def create_app(object_name):
         )
     )
 
-
-    admin.add_view(
-        CustomFileAdmin(
-            os.path.join(os.path.dirname(__file__), 'static'),
-            '/static/',
-            name='Static Files'
-        )
-    )
+#防止误删 注释掉
+    # admin.add_view(
+    #     CustomFileAdmin(
+    #         os.path.join(os.path.dirname(__file__), 'static'),
+    #         '/static/',
+    #         name='Static Files'
+    #     )
+    # )
     
     admin.add_view(
         CustomModelView(

@@ -5,7 +5,7 @@ from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand
 
 from webapp import create_app
-from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost,InviteCode
+from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost,SecretKey
 
 from webapp.models import Practice, AnswerComment, Answer
 
@@ -61,26 +61,46 @@ def setup_db_test():
         print('database.db has been deleted')
 
     db.create_all()
+    
     admin_role = Role('admin')
- 
-    admin_role.description = 'admin'
+    admin_role.description = u"管理员"
     db.session.add(admin_role)
 
     default_role = Role('default')
-
-    default_role.description = 'default'
+    default_role.description = u"默认角色"
     db.session.add(default_role)
 
-    admin = User("admin")
+    #出题人角色
+    test_builder_role = Role('test_builder')
+    test_builder_role.description = u"出题人"
+    db.session.add(test_builder_role)
 
+    #第一位管理员
+    admin = User("admin")
     admin.set_password("hjkl;'")
     admin.roles.append(admin_role)
     admin.roles.append(default_role)
+    admin.roles.append(test_builder_role)
     db.session.add(admin)
     
-    invc = InviteCode()
-    invc.invite_code = "5201314666"
-    db.session.add(invc)
+    #管理员邀请码
+    admin_key = SecretKey()
+    admin_key.name = "admin_key"
+    admin_key.key_string = "admin_key"
+    db.session.add(admin_key)
+
+    #出题人邀请码
+    test_builder_key = SecretKey()
+    test_builder_key.name = "test_builder_key"
+    test_builder_key.key_string = "test_builder_key"
+    db.session.add(test_builder_key)
+
+    #默认用户邀请码
+    default_key = SecretKey()
+    default_key.name = "default_key"
+    default_key.key_string = "default_key"
+    db.session.add(default_key)
+
     s = "BODY TEXT"
     for i in range(100):
         new_post = Post("Post{}".format(i))

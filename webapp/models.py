@@ -260,11 +260,12 @@ class Note(db.Model):
         return "<Note '{}'>".format(self.text)
 
 
-class InviteCode(db.Model):
+class SecretKey(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    invite_code = db.Column(db.String(255))
+    name = db.Column(db.String(255))
+    key_string = db.Column(db.String(255))
     def __repr__(self):
-        return "<InviteCode '{}'>".format(self.invite_code) 
+        return "<SecretKey '{}'>".format(self.name) 
 
 
 
