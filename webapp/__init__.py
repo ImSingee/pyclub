@@ -4,7 +4,7 @@ import os
 import re
 from flask import Flask, redirect, url_for
 
-from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost, Note,InviteCode
+from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost, Note, SecretKey
 
 from webapp.models import Practice, AnswerComment, Answer
 
@@ -122,7 +122,7 @@ def create_app(object_name):
 
     admin.add_view(
         CustomModelView(
-            InviteCode, db.session, category='Models'
+            SecretKey, db.session, category='Models'
         )
     )
 

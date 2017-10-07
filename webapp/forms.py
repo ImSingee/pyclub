@@ -6,7 +6,7 @@ try:
 except:
     from flask_wtf import Form
 
-from webapp.models import User, db,InviteCode
+from webapp.models import User, db, SecretKey
 #=========================
 
 #=============================================
@@ -106,6 +106,7 @@ class LoginForm(Form):
 class RegisterForm(Form):
     username = StringField(u'用户名',[DataRequired(),Length(max=255)])
     password = PasswordField(u'密码',[DataRequired(),Length(min=8)])
+    verify_code = StringField(u'验证码',[DataRequired(),Length(max=255)])
     def validate(self):
         #检验输入是否合法
         check_validate = super(RegisterForm, self).validate()
@@ -144,9 +145,9 @@ class AdminRegisterForm(Form):
                               u'用户名已经存在'
                               )
             return False
-        if self.invite_code.data != InviteCode.query.filter_by(id=1).one().invite_code:
-            self.invite_code.errors.append(u"邀请码不正确哦亲")
-            return False
+        # if self.invite_code.data != InviteCode.query.filter_by(id=1).one().invite_code:
+        #     self.invite_code.errors.append(u"邀请码不正确哦亲")
+        #     return False
         return True
 
 #练习
