@@ -1,11 +1,40 @@
+{% macro render_answer_pagination(pagination, route_func, practice_id) %}
+    <nav>
+        <ul class="pagination">
+            <li>
+                <a href="{{ url_for(route_func, page=pagination.prev().page, practice_id=practice_id) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% for page in pagination.iter_pages() %}
+                {% if page %}
+                    {% if page != pagination.page %}
+                        <li><a href="{{ url_for(route_func, page=page, practice_id=practice_id ) }}">{{ page }}</a></li>
+                    {% else %}
+                        <li><a href="">{{ page }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><a>…</a><li>
+                {% endif %}
+            {% endfor %}
+            <li>
+                <a href="{{ url_for(route_func, page=pagination.next().page, practice_id=practice_id) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endmacro %}
+
 
 {% extends "practice_base.html" %}
 {% block title %}{{ practice.title }}{% endblock %}
 {% block body %}
     <div class="row">
+
         <div class="col-lg-9">
             <div class="panel panel-info">
-                <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id) }}"><h4>{{ practice.title }}</a></h4>
+                <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}"><h4>{{ practice.title }}</a></h4>
                 </div>
 
                 <div class="panel-body">
@@ -15,7 +44,7 @@
                 <div class="panel-footer">by:{{ practice.user.username }} 
                                           on : {{ practice.publish_date | deal_time() }}
                 {% if current_user == practice.user %}
-                     <a href="{{ url_for('.edit_practice', id=practice.id) }}" class="btn btn-primary" >    <span class="glyphicon glyphicon-pencil">edit</span>
+                     <a href="{{ url_for('.edit_practice', id=practice.id) }}" class="btn btn-primary" >    <span class="glyphicon glyphicon-pencil">问题编辑</span>
                       </a>
                       <a href="javascript:;" onclick="if(confirm('确定要删除？')){location.href='{{ url_for('.delete_practice', id=practice.id) }}';}" class="btn btn-danger">
                       <span class="glyphicon glyphicon-trash"></span>
@@ -31,7 +60,7 @@
                 <div class="col-lg-2">
                       <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" 
                             data-target="#demo">
-                        <span class="glyphicon glyphicon-pencil">回答</span>
+                        <span class="glyphicon glyphicon-pencil">回答 / 隐藏</span>
 
                       </button>                   
                   
@@ -39,6 +68,9 @@
             </div>
             <br>
             <br>
+            <br>
+            <br>
+            <hr>
 
 
             
@@ -53,7 +85,7 @@
             <div id="demo" class="collapse">
                 {% if current_user.username %}
                 <div class="col-lg-12">
-                    <form method="post" action="{{ url_for('.practice', practice_id=practice.id) }}">
+                    <form method="post" action="{{ url_for('.practice', practice_id=practice.id, page=1) }}">
                         {{ form.hidden_tag() }}
                         <div class="form-group">
                             {{ form.text.label }}
@@ -66,6 +98,9 @@
                         </div>
                         <input class="btn btn-primary" type="submit" value="提交">
                     </form>
+                <br>
+                <br>
+                <br>
                 </div>
                 {% else %}
                 <div class="alert alert-warning">请先<a href="{{ url_for('main.login') }}">登录</a>
@@ -74,10 +109,10 @@
             </div>
             
                 <div class="col-lg-12">
-                    {% if answers | length == 0 %}
+                    {% if not answers %}
                     <p>该练习还没有人提交解答.</p>
                     {% else %}
-                        {% for answer in answers %}
+                        {% for answer in answers.items %}
                             <div class="panel panel-warning">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
@@ -86,7 +121,7 @@
 
                                             {{ answer.text | truncate(250) | get_text}}
                                         <button type="button" class="btn btn-default btn-sm">
-                                            <span class="glyphicon glyphicon-sort"></span> 
+                                            <span class="">查看/隐藏</span> 
                                         </button>
                                         </a>
                                     </h4>
@@ -110,16 +145,17 @@
                                       </a>
                                 {% endif %}
                                 <span>------</span>
+                                {% set answer_comments=answer.answer_comments.all() %}
                                 <a data-toggle="collapse" 
-                                    href="#answer_comment">
-                                <span class="glyphicon glyphicon-pencil">查看/隐藏评论</span>
+                                    href="#{{ answer.id }}test">
+                                <span class="glyphicon glyphicon-pencil">查看/隐藏评论({{ answer_comments | length }})</span>
                                 </a>
                                 <br>
                                 <hr>
-                                <div id="answer_comment" class="collapse">
+                                <div id="{{ answer.id }}test" class="collapse">
 
                                     {% for answer_comment in answer.answer_comments %}
-                                    <div class="row">
+                                    <div class="row"> 
                                       <span>{{ answer_comment.user.username }}</span>
                                       <span> : </span>
                                       <span>{{ answer_comment.text }}</span>
@@ -148,7 +184,6 @@
                                     </div>
                                     {% endif %}
                                 </div>
-
                                 
                                 </div> 
                             </div>
@@ -162,6 +197,7 @@
                             
                         {% endfor %}
                     {% endif %}
+                    {{ render_answer_pagination(answers, '.practice',practice.id) }}
                 </div>
             </div>
         </div>

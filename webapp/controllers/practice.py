@@ -3,7 +3,7 @@
 import datetime
 from os import path
 from sqlalchemy import func
-from flask import render_template, Blueprint
+from flask import render_template, Blueprint, flash
 from webapp.models import db, Post, Tag, Comment, User, tags, GLink, RelatedPost, Note
 from webapp.forms import AnswerForm, PracticeForm, AnswerCommentForm
 from flask import redirect, url_for
@@ -95,8 +95,8 @@ def home(page=1):
 #===============================================================
 #练习的具体页面
 
-@practice_blueprint_.route('/practice/<int:practice_id>', methods=['GET','POST'])
-def practice(practice_id):
+@practice_blueprint_.route('/practice/<int:practice_id>/<int:page>', methods=['GET','POST'])
+def practice(practice_id, page=1):
 
     form = AnswerForm()
     if form.validate_on_submit():
@@ -109,16 +109,19 @@ def practice(practice_id):
         new_answer.practice_id = practice_id
         db.session.add(new_answer)
         db.session.commit()
+        flash("解答已经成功提交.", category="success")
 
 
     practice = Practice.query.get_or_404(practice_id)
-    answers = practice.answers.order_by(Answer.date.desc()).all()
+    # answers = practice.answers.order_by(Answer.date.desc()).all()
+    answers = practice.answers.order_by(Answer.date.desc()).paginate(page, 10)
 
     #一些侧边栏
     not_viewed_inform_num = get_not_viewed_inform_num() 
     note = get_note()
     
     answer_comment_form = AnswerCommentForm()
+    answer_comment_form.text.data = u'输入你的评论'
 
     return render_template(
         'practice.html',
@@ -145,8 +148,9 @@ def add_answer_comment(answer_id):
         new_answer_comment.answer_id = answer_id
         db.session.add(new_answer_comment)
         db.session.commit()
+        flash("评论已经成功提交.", category="success")
     practice_id = Answer.query.filter_by(id=answer_id).one().practice_id
-    return redirect(url_for('practice_.practice', practice_id=practice_id))
+    return redirect(url_for('practice_.practice', practice_id=practice_id, page=1))
 
 #====================================================================
 #删除函数
@@ -170,7 +174,7 @@ def delete_answer(id):
     if permission.can() or admin_permission.can():
         db.session.delete(answer)
         db.session.commit()
-        return redirect(url_for('practice_.practice', practice_id=practice_id))
+        return redirect(url_for('practice_.practice', practice_id=practice_id, page=1))
     abort(403)
 
 #==============================================================
