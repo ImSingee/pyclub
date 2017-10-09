@@ -12,21 +12,22 @@
 
                         <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
                     </div>
-                {#  <div class="panel-footer">
+                 <div class="panel-footer">
                     {% if practice.user.nick_name != None %}
-                        <a href="{{ url_for('.base_user_inform', username=practice.user.username) }}">
+                        <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
                         by:{{ practice.user.nick_name }}
                        </a>
                     {% else %}
-                        <a href="{{ url_for('.base_user_inform', username=practice.user.username) }}">
+                        <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
                         by:{{ practice.user.username }}
                         </a>
                     {% endif %} 
                       on : {{ practice.publish_date | deal_time() }}
-                    follow : {{ practice.comments.order_by(Comment.date.desc()).all() | length }}
+                      
+                      ans : {{ practice.answers.all() | length }}
                                     
                     </div>
-                </div>    #} 
+                </div>    
             {% endfor %}
         </div>
 
@@ -40,20 +41,20 @@
 
                         <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
                     </div>
-                {#  <!-- <div class="panel-footer">
+                   <div class="panel-footer">
                     {% if practice.user.nick_name != None %}
-                        <a href="{{ url_for('.base_user_inform', username=practice.user.username) }}">
+                        <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
                         by:{{ practice.user.nick_name }}
                        </a>
                     {% else %}
-                        <a href="{{ url_for('.base_user_inform', username=practice.user.username) }}">
+                        <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
                         by:{{ practice.user.username }}
                         </a>
                     {% endif %} 
                       on : {{ practice.publish_date | deal_time() }}
-                    follow : {{ practice.comments.order_by(Comment.date.desc()).all() | length }}
+                       ans : {{ practice.answers.all() | length }}
                                     
-                    </div> --> #}  
+                    </div>
                 </div>    
             {% endfor %}
         </div>
