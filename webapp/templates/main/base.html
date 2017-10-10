@@ -56,7 +56,7 @@
     <nav class="navbar navbar-default" role="navigation">
       <div class="container-fluid"> 
       <div class="navbar-header">
-        <a class="navbar-brand" href="#"><a><span class="glyphicon glyphicon-volume-up"></span></a> ：{{ note.text | truncate(150) | delete_html() }}</a>
+        <a class="navbar-brand" href="#"><a><span class="glyphicon glyphicon-volume-up"></span></a> ：{{ note.text | truncate(150)}}</a>
       </div>
       </div>
     </nav>
@@ -79,7 +79,7 @@
             </ul>
       </li>
       <li>
-          <a href="{{ url_for('glinks.glinks') }}">
+          <a href="{{ url_for('sharing_.sharing') }}">
           <span class="glyphicon glyphicon-link"></span>
           </a>
       </li>

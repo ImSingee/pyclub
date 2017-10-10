@@ -4,7 +4,7 @@ import datetime
 from os import path
 from sqlalchemy import func
 from flask import render_template, Blueprint
-from webapp.models import db, Post, Tag, Comment, User, tags, GLink, RelatedPost, Note
+from webapp.models import db, Post, Tag, Comment, User, tags, RelatedPost, Note
 from webapp.forms import CommentForm, PostForm, UserForm
 from flask import redirect, url_for
 from flask import g, session, abort

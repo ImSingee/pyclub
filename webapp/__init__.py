@@ -4,13 +4,13 @@ import os
 import re
 from flask import Flask, redirect, url_for
 
-from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost, Note, SecretKey
+from webapp.models import db, User, Post, Tag, Comment, Role, Sharing, RelatedPost, Note, SecretKey
 
 from webapp.models import Practice, AnswerComment, Answer
 
 from webapp.controllers.tiezi import tiezi_blueprint
 from webapp.controllers.main import main_blueprint
-from webapp.controllers.glinks import glinks_blueprint
+from webapp.controllers.sharing import sharing_blueprint
 from webapp.controllers.practice import practice_blueprint_
 
 from webapp.extensions import (bcrypt,admin)
@@ -30,7 +30,7 @@ from .controllers.admin import (
     CustomModelView,
     CustomFileAdmin,
     PostView,
-    GLinkView
+    SharingView
 )
 #=======================================================
 #应用的工厂模式，在manage.py中控制配置环境
@@ -132,8 +132,8 @@ def create_app(object_name):
     )
 
     admin.add_view(
-        GLinkView(
-            GLink, db.session, category='Models'
+        SharingView(
+            Sharing, db.session, category='Models'
         )
     )
 
@@ -166,7 +166,7 @@ def create_app(object_name):
     #蓝图注册
     app.register_blueprint(tiezi_blueprint)
     app.register_blueprint(main_blueprint)
-    app.register_blueprint(glinks_blueprint)
+    app.register_blueprint(sharing_blueprint)
     app.register_blueprint(practice_blueprint_)
     
     @app.route('/')

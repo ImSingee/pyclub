@@ -34,7 +34,7 @@ class PostView(CustomModelView):
     create_template = 'admin/post_edit.html'
     edit_template = 'admin/post_edit.html'
 
-class GLinkView(CustomModelView):
+class SharingView(CustomModelView):
     form_overrides = dict(text=CKTextAreaField)
     column_searchable_list = ('text', 'title')
     column_filters = ('received_date',)

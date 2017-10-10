@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Sharing Creation{% endblock %}
+{% block body %}
+
+
+<div class="col-lg-12">
+	
+	<form method="POST" action="{{ url_for('.new_sharing') }}">
+	{# {{ form.hidden_tag() }}#}
+	  <div class="form-group">
+	  {{ form.title.label }}
+	    {% if form.title.errors %}
+	      {% for e in form.title.errors %}
+	       <p class="help-block">{{ e }}/p>
+	      {% endfor %}
+	    {% endif %}
+        {{ form.title(class_='form-control')}}
+	  </div>
+
+	  <div class="form-group">
+	  {{ form.text.label }}
+	  {% if form.text.errors %}
+	    {% for e in form.text.errors %}
+	      <p class="help-block">{{ e }}</p>
+	    {% endfor %}
+	  {% endif %}
+
+	  {{ form.text(id="editor", class='form-control') }}
+	  	
+	  </div>
+	  <div class="form-group">
+	  {{ form.url.label }}
+	  {% if form.url.errors %}
+	    {% for e in form.url.errors %}
+	      <p class="help-block">{{ e }}</p>
+	    {% endfor %}
+	  {% endif %}
+	  {{ form.url(id="url", class='form-control') }}	  	
+	  </div>
+	  <div class="form-group">
+	  {{ form.sharer.label }}
+	  {% if form.sharer.errors %}
+	    {% for e in form.sharer.errors %}
+	      <p class="help-block">{{ e }}</p>
+	    {% endfor %}
+	  {% endif %}
+	  {{ form.sharer(id="sharer", class='form-control') }}	  	
+	  </div>
+	  <div class="form-group">
+	  {{ form.token.label }}
+	  {% if form.token.errors %}
+	    {% for e in form.token.errors %}
+	      <p class="help-block">{{ e }}</p>
+	    {% endfor %}
+	  {% endif %}
+	  {{ form.token(id="tokrn", class='form-control') }}	  	
+	  </div>
+	  <input class="btn btn-primary" type="submit" value="提交">
+	  
+	</form>
+</div>
+{#
+<!-- <script type="text/javascript" src="/static/ckeditor/ckeditor.js"></script>
+<script>editor=CKEDITOR.replace('editor');</script> -->
+#}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+{% endblock %}
+
+
+{# 注意一下静态文件的路径 #}

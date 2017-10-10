@@ -5,12 +5,11 @@
 *.so
 *.egg
 *.egg-info
+*.db
 dist
 build
 
-glink.db
 
-database.db
 db.ini
 deploy_key_rsa
 itchat.pkl

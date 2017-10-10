@@ -5,7 +5,7 @@ from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand
 
 from webapp import create_app
-from webapp.models import db, User, Post, Tag, Comment, Role, GLink, RelatedPost,SecretKey
+from webapp.models import db, User, Post, Tag, Comment, Role, Sharing, RelatedPost,SecretKey
 
 from webapp.models import Practice, AnswerComment, Answer
 
@@ -138,6 +138,21 @@ def setup_db_test():
         new_pracice.dynamic_date = datetime.datetime.now()
         new_pracice.published_date = datetime.datetime.now()
         db.session.add(new_pracice)
+
+    #创建几篇分享文章
+    for i in range(30):
+        new_sharing = Sharing("Sharing{}".format(i))
+        new_sharing.text = "this is top sharing text"
+        new_sharing.sharer = "小明"
+        new_sharing.received_date = datetime.datetime.now()
+        new_sharing.url = "http://zhuojiayuan.com"
+        db.session.add(new_sharing)
+    #创建几个秘钥：
+    s = SecretKey()
+    s.name = "sharing_token"
+    s.key_string = "5201314666"
+    db.session.add(s)
+
 
     db.session.commit()
     print("database init done")

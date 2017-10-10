@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}文章分享{% endblock %}
+{% block body %}
+    <div class="row">
+   
+        <div class="col-lg-9">
+        <center><h2>文章分享</h2></center>
+            {% for sharing in sharings.items %}
+                <div class="panel panel-info">
+                    <div class="panel-heading"><a href={{ sharing.url  }}><h4>{{ sharing.title }}</a></h4></div>
+
+                    <div class="panel-body">
+                        {{ sharing.text | truncate(250) | get_text }}
+
+                        <a href={{ sharing.url  }}>查看>></a>
+                    </div>
+                    <div class="panel-footer">shared by:{{ sharing.sharer }} 
+                                              on : {{ sharing.received_date | deal_time() }}
+                                            
+                                    
+                    </div>
+                </div>    
+            {% endfor %}
+        </div>
+    </div>
+    {{ render_pagination(sharings, '.sharing') }}
+{% endblock %}

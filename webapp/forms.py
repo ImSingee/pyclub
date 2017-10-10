@@ -166,3 +166,37 @@ class PracticeForm(Form):
 class AnswerCommentForm(Form): 
  
     text = TextAreaField(u'评论', validators=[DataRequired()])
+
+
+#分享文章
+#此处关闭了csrf保护
+class SharingForm(Form):
+    title = StringField(u'标题', [DataRequired(), Length(max=255)])
+    url = TextAreaField(u'链接', [DataRequired()])
+    text = TextAreaField(u'文章内容', [DataRequired()])
+    sharer = StringField(u'分享人', [DataRequired(), Length(max=255)])
+    token = StringField(u'token', [DataRequired(), Length(max=255)])
+
+    def __init__(self, csrf_enabled=False, *args, **kwargs):
+        super(SharingForm, self).__init__(csrf_enabled=csrf_enabled, *args, **kwargs)
+
+    def validate(self):
+        #检验输入是否合法
+        check_validate = super(SharingForm, self).validate()
+
+        if not check_validate:
+            return False
+        #检验token
+        sk = SecretKey.query.filter_by(
+                           name = "sharing_token"
+                           ).first()
+        
+        if self.token.data != sk.key_string:
+            self.token.errors.append(u"token不正确")
+
+            return False
+
+        return True
+
+
+

@@ -210,7 +210,7 @@ class Comment(db.Model):
 
         
 
-class GLink(db.Model):
+class Sharing(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.Text()) 
     text = db.Column(db.Text())
@@ -221,7 +221,7 @@ class GLink(db.Model):
         self.title = title
 
     def __repr__(self):
-        return "<GLink '{}'>".format(self.title)
+        return "<Sharing '{}'>".format(self.title)
 
 
         

@@ -49,13 +49,14 @@ activate the virtual environment
 install all independence in the virtual environment   
 `(my_env)$ pip install -r requirements.txt`  
 
-#### test run
+#### test run:
 initiate databse:       
 `(my_env)$ python manage.py setup_db_test`
+
 run the server:       
 `(my_env)$ python manage.py gserver`  
 
-#### real run
+#### real run:
 initiate databse:       
 `(my_env)$ python manage.py setup_db_real`  
 
