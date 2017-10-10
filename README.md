@@ -1,8 +1,8 @@
 
 # Introduction
 This is a webapp powered by __flask__ & __bootstrap__,which is designed for:  
-- **Collecting sharings shared by members in Wechat group, save them into database and show them on a webpage**
-- **Q&A. Posting questions or views, other members can comment on it, a bit like Tieba**
+- **A very very friendly community for newbie**
+- **Enhance communication.Posting questions or sharing views, other members can comment on it, a bit like Tieba**
 
 # Config
 to make WTForm work correctly, we need a secret key.The secret key is a random-like string.
@@ -58,11 +58,6 @@ run the server:
 __note__:
 if with window, get into /my_env/Scripts/ , then run `activate` in the command line in this directory so as to activate the virtual environment
 
-### to run the robot:
-`$ python manage.py robot`   
-A QR code will generate, you need to scan it and press confirm on your phone to log in your wechat account
-then the robot(your wechat account)begin listening.Once somebody send sharing in Wechat group chatroom,
-it can save the sharing info into database.
 
 # Deploy
 The most easiest way to deploy this webapp by using **gevent**, the related code was included in **manage.py**,
@@ -80,4 +75,4 @@ run:
 - [ ] add unittest
 - [ ] add cache
 - [ ] construct restful API
-- [ ] log in with wechat openid
+- [ ] log in with  openid
