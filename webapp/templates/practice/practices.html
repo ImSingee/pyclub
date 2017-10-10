@@ -8,7 +8,7 @@
                     <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id,page=1) }}"><h4>【置顶】  {{ practice.title }}</a></h4></div>
 
                     <div class="panel-body">
-                        {{ practice.text | truncate(250) | delete_html() }}
+                        {{ practice.text | truncate(500) | delete_html() }}
 
                         <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
                     </div>
@@ -23,21 +23,24 @@
                         </a>
                     {% endif %} 
                       on : {{ practice.publish_date | deal_time() }}
-                      
+
                       ans : {{ practice.answers.all() | length }}
                                     
                     </div>
                 </div>    
             {% endfor %}
         </div>
-
+        {% for role in current_user.roles %}
+        {% if role.name == 'test_builder' %}
         <div class="col-lg-9">
+        <hr>
+        <p>以下仅对test_builder用户可见：</p>
             {% for practice in practices.items %}
                 <div class="panel panel-info">
                     <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}"><h4>{{ practice.title }}</a></h4></div>
 
                     <div class="panel-body">
-                        {{ practice.text | truncate(250) | delete_html() }}
+                        {{ practice.text | truncate(500) | get_text() }}
 
                         <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
                     </div>
@@ -58,6 +61,8 @@
                 </div>    
             {% endfor %}
         </div>
+        {% endif %}
+        {% endfor %}
 
 {#<!--         <div class="col-lg-9">
             {% for practice in practices.items %}

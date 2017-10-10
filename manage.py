@@ -39,7 +39,7 @@ manager.add_command("db", MigrateCommand)
 def make_shell_context():
     return dict(app=app, db=db, User=User,
      Post=Post, Tag=Tag, Comment=Comment,
-      Role=Role,InviteCode=InviteCode,
+      Role=Role,
       Answer=Answer,
       AnswerComment=AnswerComment,
       Practice=Practice
@@ -57,6 +57,7 @@ def make_shell_context():
 def setup_db_test():
     try:
         os.remove('database.db')
+        print("deleting the existed database.db")
     except:
         print('database.db has been deleted')
 
@@ -120,7 +121,7 @@ def setup_db_test():
         db.session.add(new_post)
 
     #创建几个练习
-    for i in range(100):
+    for i in range(100,130):
         new_pracice = Practice("Practice{}".format(i))
         new_pracice.user= admin
         new_pracice.text = "this is practice"
@@ -133,11 +134,13 @@ def setup_db_test():
         new_pracice = Practice("Practice{}".format(i))
         new_pracice.user= admin
         new_pracice.text = "this is top practice"
+        new_pracice.is_top = True
         new_pracice.dynamic_date = datetime.datetime.now()
         new_pracice.published_date = datetime.datetime.now()
         db.session.add(new_pracice)
 
     db.session.commit()
+    print("database init done")
 
 
 @manager.command
@@ -164,9 +167,9 @@ def setup_db_real():
     admin.roles.append(default_role)
     db.session.add(admin)
     
-    invc = InviteCode()
-    invc.invite_code = "5201314666"
-    db.session.add(invc)
+    # invc = InviteCode()
+    # invc.invite_code = "5201314666"
+    # db.session.add(invc)
 
     # 第一篇文章
     new_post = Post("第一篇文章")

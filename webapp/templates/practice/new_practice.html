@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Post Creation{% endblock %}
+{% block title %}Practice Creation{% endblock %}
 {% block body %}
 
 
 <div class="col-lg-12">
 	
-	<form method="POST" action="{{ url_for('.new_post') }}">
+	<form method="POST" action="{{ url_for('practice_.new_practice') }}">
 	  {{ form.hidden_tag() }}
 	  <div class="form-group">
 	  {{ form.title.label }}

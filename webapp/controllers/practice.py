@@ -234,39 +234,31 @@ def edit_answer(id):
     abort(403)
 #================================================================================
 
-# @practice_blueprint_.route('/new_practice', methods=['GET', 'POST'])
-# @login_required
-# #@poster_permission.require(http_exception=403)
-# def new_practice():
-#     form = PostForm()
+@practice_blueprint_.route('/new_practice', methods=['GET', 'POST'])
+@login_required
+#@poster_permission.require(http_exception=403)
+def new_practice():
+    form = PracticeForm()
 
-#     if form.validate_on_submit():
+    if form.validate_on_submit():
 
-#         new_post = Post(form.title.data)
-#         new_post.text = form.text.data
-#         now = datetime.datetime.now()
-#         new_post.publish_date = now
-#         new_post.dynamic_date = now
-#         new_post.user = User.query.filter_by(
-#             username=current_user.username
-#         ).one()
-#         db.session.add(new_post)
-#         db.session.commit()
-
-#         post = Post.query.filter_by(publish_date=now).one()
-#         new_related_post = RelatedPost()
-#         new_related_post.post_id = post.id
-#         new_related_post.user_id = post.user_id
-#         new_related_post.viewed_date = now
-#         db.session.add(new_related_post)
-#         db.session.commit()
+        new_practice = Practice(form.title.data)
+        new_practice.text = form.text.data
+        now = datetime.datetime.now()
+        new_practice.publish_date = now
+        new_practice.dynamic_date = now
+        new_practice.user = User.query.filter_by(
+            username=current_user.username
+        ).one()
+        db.session.add(new_practice)
+        db.session.commit()
         
-#     not_viewed_inform_num = get_not_viewed_inform_num()
-#     note = get_note()
-#     return render_template('new_practice.html',
-#                             form=form,
-#                             not_viewed_inform_num=not_viewed_inform_num,
-#                             note=note)
+    not_viewed_inform_num = get_not_viewed_inform_num()
+    note = get_note()
+    return render_template('new_practice.html',
+                            form=form,
+                            not_viewed_inform_num=not_viewed_inform_num,
+                            note=note)
 
 
 # #===================================================

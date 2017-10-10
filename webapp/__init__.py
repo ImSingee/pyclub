@@ -55,11 +55,16 @@ def deal_time(deal_time=None):
     
     return string
 
+#get text of html
 def get_text(html=None):
     reg = r'>(.*?)</'
     pattern = re.compile(reg)
     result = pattern.findall(html)
     text = " ".join(result)
+    try:
+        text = text.replace('&nbsp','')
+    except Exception as e:
+        pass
     return text
 
 def create_app(object_name):

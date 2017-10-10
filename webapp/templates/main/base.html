@@ -111,6 +111,13 @@
                           <li><a href="{{ url_for('admin.index') }}">管理员</a></li>
                       {% endif %}
                   {% endfor %}
+
+                  {% for role in current_user.roles %}
+                      {% if role.name == 'test_builder' %}
+                          <li class="divider"></li>
+                          <li><a href="{{ url_for('practice_.new_practice') }}">出题(test_buider)</apractice.new_practice></li>
+                      {% endif %}
+                  {% endfor %}
               <li class="divider"></li>
               <li><a href="{{ url_for('tiezi.not_viewed') }}">
                   <span class="glyphicon glyphicon-comment"></span>  <span class="badge">

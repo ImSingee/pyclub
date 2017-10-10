@@ -24,6 +24,7 @@ class User(db.Model):
     User类<-->user表'''
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(255))
+    email = db.Column(db.String(255))
     password = db.Column(db.String(255))
     nick_name = db.Column(db.String(255))
     class_major = db.Column(db.String(255))
@@ -276,7 +277,9 @@ class Practice(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(255))
-    is_top = db.Column(db.Boolean()) 
+    is_top = db.Column(db.Boolean())
+    #对于默认用户是否可见
+    is_viewed_by_default_role = db.Column(db.Boolean())  
     text = db.Column(db.Text())
     publish_date = db.Column(db.DateTime())
 
@@ -296,6 +299,7 @@ class Practice(db.Model):
     def __init__(self, title):
         self.title = title
         self.is_top = False
+        self.is_viewed_by_default_role = False
 
 
     def __repr__(self):
@@ -305,7 +309,7 @@ class Practice(db.Model):
 class Answer(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
-
+    praise_point = db.Column(db.Integer())
     name = db.Column(db.String(255))
     user_id = db.Column(db.Integer(),
                         db.ForeignKey('user.id')) 

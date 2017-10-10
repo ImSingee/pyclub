@@ -14,5 +14,6 @@ database.db
 db.ini
 deploy_key_rsa
 itchat.pkl
+migrations
 
 __pycache__
