@@ -37,6 +37,7 @@ add the string into config.py:
 
 ###  to run the webapp:
 
+
 create a virtual environment:  
 `$pip3 install virtualenv`  
 
@@ -48,15 +49,22 @@ activate the virtual environment
 install all independence in the virtual environment   
 `(my_env)$ pip install -r requirements.txt`  
 
+#### test run
 initiate databse:       
-`(my_env)$ python manage.py setup_db`  
+`(my_env)$ python manage.py setup_db_test`
+run the server:       
+`(my_env)$ python manage.py gserver`  
+
+#### real run
+initiate databse:       
+`(my_env)$ python manage.py setup_db_real`  
 
 run the server:       
 `(my_env)$ python manage.py gserver`  
 
 
 __note__:
-if with window, get into /my_env/Scripts/ , then run `activate` in the command line in this directory so as to activate the virtual environment
+if with window, get into /my_env/Scripts/ , then run `activate` in the command line in this directory so as to activate the virtual environment.You can also add it to path.
 
 
 # Deploy
