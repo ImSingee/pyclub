@@ -1,3 +1,72 @@
+
+
+{% macro render_pagination_my_posts(pagination, route_func) %}
+    <nav>
+        <ul class="pagination">
+            {# 上一页 #}
+            <li>
+                <a href="{{ url_for(route_func, page1=pagination.prev().page, page2=1) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% for page in pagination.iter_pages() %}
+                {% if page %}
+                    {% if page != pagination.page %}
+                        <li><a href="{{ url_for(route_func, page1=page, page2=1 ) }}">{{ page }}</a></li>
+                    {% else %}
+                        <li><a href="">{{ page }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><a>…</a><li>
+                {% endif %}
+            {% endfor %}
+            {# 下一页 #}
+            <li>
+                <a href="{{ url_for(route_func, page1=pagination.next().page, page2=1) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endmacro %}
+
+
+{% macro render_pagination_my_reply_posts(pagination, route_func) %}
+    <nav>
+        <ul class="pagination">
+            {# 上一页 #}
+            <li>
+                <a href="{{ url_for(route_func, page2=pagination.prev().page, page1=1) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% for page in pagination.iter_pages() %}
+                {% if page %}
+                    {% if page != pagination.page %}
+                        <li><a href="{{ url_for(route_func, page2=page, page1=1 ) }}">{{ page }}</a></li>
+                    {% else %}
+                        <li><a href="">{{ page }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><a>…</a><li>
+                {% endif %}
+            {% endfor %}
+            {# 下一页 #}
+            <li>
+                <a href="{{ url_for(route_func, page2=pagination.next().page, page1=1) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endmacro %}
+
+
+
+
+
+
+
 {% extends "base.html" %}
 {% block title %}user admin{% endblock %}
 {% block body %}
@@ -39,7 +108,7 @@
 
                 {% endfor %}
             {% endif %}
-            {{ render_pagination(posts, '.user_admin') }}
+            {{ render_pagination_my_posts(posts, '.user_admin') }}
             <hr>
             <hr>
             <h4>回过的帖：</h4>
@@ -75,7 +144,8 @@
                     
                 {% endfor %}
             {% endif %}
-            {{ render_pagination(comment_related_posts, '.user_admin') }}
+            
+            {{ render_pagination_my_reply_posts(comment_related_posts, '.user_admin') }}
         </div>
     </div>
 

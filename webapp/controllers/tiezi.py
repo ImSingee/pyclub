@@ -7,7 +7,7 @@ from flask import render_template, Blueprint
 from webapp.models import db, Post, Tag, Comment, User, tags, RelatedPost, Note
 from webapp.forms import CommentForm, PostForm, UserForm
 from flask import redirect, url_for
-from flask import g, session, abort
+from flask import g, session, abort, flash
 from flask_login import login_required, current_user
 from webapp.extensions import poster_permission, admin_permission
 from flask_principal import Permission, UserNeed
@@ -375,17 +375,17 @@ def tag(tag_name):
 #帖子作者
 @login_required
 @tiezi_blueprint.route('/user_admin/')
-@tiezi_blueprint.route('/user_admin/<int:page>')
-def user_admin(page=1):
+@tiezi_blueprint.route('/user_admin/<int:page1>/<int:page2>')
+def user_admin(page1=1, page2=1):
     user = current_user
     try:
-        posts = user.posts.order_by(Post.publish_date.desc()).paginate(page, 5)
+        posts = user.posts.order_by(Post.publish_date.desc()).paginate(page1, 5)
     except Exception as e:
         print(e)
         posts = None
     try:
         comment_related_posts = RelatedPost.query.filter_by(is_commented_only=True,
-            user_id=current_user.id).paginate(page,5)
+            user_id=current_user.id).paginate(page2, 5)
 
 
 
@@ -508,6 +508,7 @@ def edit_user_inform(id):
 
             db.session.add(user)
             db.session.commit()
+            flash(u"信息更新成功", category="success")
 
             return redirect(url_for('.edit_user_inform', id=user.id))
         form.description.data=user.description
