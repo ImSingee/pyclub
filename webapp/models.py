@@ -32,6 +32,7 @@ class User(db.Model):
 
     blog_addr = db.Column(db.String(255))
     github_addr = db.Column(db.String(255))
+    ip =  db.Column(db.String(255))
 
 
     #===========================
@@ -278,6 +279,7 @@ class Practice(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(255))
     is_top = db.Column(db.Boolean())
+    is_qualified = db.Column(db.Boolean())
     #对于默认用户是否可见
     is_viewed_by_default_role = db.Column(db.Boolean())  
     text = db.Column(db.Text())
@@ -299,6 +301,7 @@ class Practice(db.Model):
     def __init__(self, title):
         self.title = title
         self.is_top = False
+        self.is_qualified = False
         self.is_viewed_by_default_role = False
 
 

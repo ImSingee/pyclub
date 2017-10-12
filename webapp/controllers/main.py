@@ -184,19 +184,51 @@ def generate_verification_code():
 #  <img id="verficode" src="./verficode" onclick="this.src='./verficode?d='+Math.random();" />
 
 #==============================================================================================
+#需要验证码的注册
+# @main_blueprint.route('/register', methods=['GET', 'Post'])
+# def register():
+#     form = RegisterForm()
+#     if form.validate_on_submit():
+#         if 'code_text' in session and session['code_text'] != form.verify_code.data:
+#             code_img, code_text = generate_verification_code()
+#             session['code_text'] = code_text
+#             return render_template('register.html',
+#                                    form=form,
+#                                    code_img=code_img,
+#                                    not_viewed_inform_num=get_not_viewed_inform_num(),
+#                                    note=get_note())
+#         new_user = User(form.username.data)
+#         new_user.set_password(form.password.data)
+#         new_user.blog_addr = 'http://'
+#         new_user.github_addr = 'https://github.com/'
+#         try:
+#             db.session.add(new_user)
+#             db.session.commit()
+#             flash(u"账号已经创立，请登录", category="success")
+#             return redirect(url_for('.login'))
+#         except:
+#             print(traceback.print_exc())
+#             db.session.rollback()
+#             flash(u'注册失败')
+#             code_img, code_text = generate_verification_code()
+#             session['code_text'] = code_text
+#             return render_template('register.html',
+#                         form=form,
+#                         code_img=code_img,
+#                         not_viewed_inform_num = get_not_viewed_inform_num(),
+#                         note=get_note())
+#     code_img, code_text = generate_verification_code()
+#     session['code_text'] = code_text
+#     return render_template('register.html',
+#                         form=form,
+#                         code_img=code_img,
+#                         not_viewed_inform_num = get_not_viewed_inform_num(),
+#                         note=get_note())
 
 @main_blueprint.route('/register', methods=['GET', 'Post'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        if 'code_text' in session and session['code_text'] != form.verify_code.data:
-            code_img, code_text = generate_verification_code()
-            session['code_text'] = code_text
-            return render_template('register.html',
-                                   form=form,
-                                   code_img=code_img,
-                                   not_viewed_inform_num=get_not_viewed_inform_num(),
-                                   note=get_note())
         new_user = User(form.username.data)
         new_user.set_password(form.password.data)
         new_user.blog_addr = 'http://'
@@ -210,21 +242,14 @@ def register():
             print(traceback.print_exc())
             db.session.rollback()
             flash(u'注册失败')
-            code_img, code_text = generate_verification_code()
-            session['code_text'] = code_text
             return render_template('register.html',
                         form=form,
-                        code_img=code_img,
                         not_viewed_inform_num = get_not_viewed_inform_num(),
                         note=get_note())
-    code_img, code_text = generate_verification_code()
-    session['code_text'] = code_text
     return render_template('register.html',
                         form=form,
-                        code_img=code_img,
                         not_viewed_inform_num = get_not_viewed_inform_num(),
                         note=get_note())
-
 
 @main_blueprint.route('/admin_register', methods=['GET', 'Post'])
 def admin_register():

@@ -1,3 +1,147 @@
+{#
+    <div class="row">
+        <div class="col-lg-9">
+            {% for practice in qualified_practices.items %}
+                <div class="panel panel-success">
+                    <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id,page=1) }}"><h4>【置顶】  {{ practice.title }}</a></h4></div>
+
+                    <div class="panel-body">
+                        {{ practice.text | truncate(500) | delete_html() }}
+
+                        <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
+                    </div>
+            
+                 <div class="panel-footer">
+                    {% if practice.user.nick_name != None %}
+                        <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
+                        by:{{ practice.user.nick_name }}
+                       </a>
+                    {% else %}
+                        <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
+                        by:{{ practice.user.username }}
+                        </a>
+                    {% endif %} 
+                      on : {{ practice.publish_date | deal_time() }}
+
+                      ans : {{ practice.answers.all() | length }}
+                                    
+                    </div>
+                </div>
+  
+            {% endfor %}
+            {{ render_unqualified_pagination(unqualified_practices, ".home")}}
+            
+        </div>
+        {% for role in current_user.roles %}
+        {% if role.name == 'test_builder' %}
+        <div class="col-lg-9">
+        <hr>
+        <p>以下仅对test_builder用户可见：</p>
+            {% for practice in unqualified_practices.items %}
+                <div class="panel panel-info">
+                    <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}"><h4>{{ practice.title }}</a></h4></div>
+
+                    <div class="panel-body">
+                        {{ practice.text | truncate(500) | get_text() }}
+
+                        <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
+                    </div>
+                   <div class="panel-footer">
+                        {% if practice.user.nick_name != None %}
+                            <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
+                            by:{{ practice.user.nick_name }}
+                           </a>
+                        {% else %}
+                            <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
+                            by:{{ practice.user.username }}
+                            </a>
+                        {% endif %} 
+                          on : {{ practice.publish_date | deal_time() }}
+                           ans : {{ practice.answers.all() | length }}
+                            <form class="radio-inline" method="POST" action="{{ url_for('.alter_practice_attr', id=practice.id) }}">
+                              {{ form.hidden_tag() }}
+                              <div class="radio-inline">
+                              {{ form.is_top.label }}
+                                {% if form.is_top.errors %}
+                                  {% for e in form.is_top.errors %}
+                                   <p class="help-block">{{ e }}/p>
+                                  {% endfor %}
+                                {% endif %}
+                                {{ form.is_top(class_="radio-inline",value=practice.is_top) }}
+                              </div>
+                              <div class="radio-inline">
+                              {{ form.is_qualified.label }}
+                                {% if form.is_qualified.errors %}
+                                  {% for e in form.is_qualified.errors %}
+                                   <p class="help-block">{{ e }}/p>
+                                  {% endfor %}
+                                {% endif %}
+                                {{ form.is_qualified(class_="radio-inline",value=practice.is_qualified) }}
+                              </div>
+                              <input class="" type="submit" value="update">
+            
+                            </form>
+                                   
+                    </div> 
+                </div>    
+            {% endfor %}
+            {{ render_unqualified_pagination(unqualified_practices, ".home")}}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+{#<!--         <div class="col-lg-9">
+            {% for practice in practices.items %}
+                <div>
+                    <div class="col-lg-12"><a href="{{ url_for('.practice', practice_id=practice.id) }}"><h4>{{ practice.title }}</a></h4></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        {{ practice.text | truncate(500) | delete_html() }}
+
+                        <a href="{{ url_for('.practice', practice_id=practice.id) }}">查看>></a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div> -->
+        <!-- <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">面板标题</h3>
+            </div>
+            <div class="panel-body">
+                这是一个基本的面板
+            </div>
+        </div> -->
+#}       
+        <div class="col-lg-3">
+{#           <!-- <div class="row">
+                <h5>新贴</h5>
+                <ul>
+                    {% for practice in recent %}
+                        <li><a href="{{ url_for('.practice', practice_id=practice.id) }}">{{ practice.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div> -->
+#} 
+            {# 
+            <div class="row">
+                <h5><span class="glyphicon glyphicon-fire"></span>Hot</h5>
+                <ul>
+                    {% for tag in top_tags %}
+                        <li><a href="{{ url_for('.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            #}
+        </div>
+    </div>
+
+#}    
+
+
+
+
+#============================
 
 {% macro render_qualified_pagination(pagination, route_func) %}
     <nav>
@@ -59,225 +203,5 @@
     </nav>
 {% endmacro %}
 
-{% extends "base.html" %}
-{% block title %}练习首页{% endblock %}
-{% block body %}
 
-    <div class="row">
-        <div class="col-lg-9">
-                {# 置顶 #}
-                <div class="panel panel-success">
-                    
-                    <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=top.id,page=1) }}"><h4>[推荐] {{ top.title }}</a></h4></div>                
-                    <div class="panel-body">
-                        {{ top.text | truncate(500) | delete_html() }}
-
-                        <a href="{{ url_for('.practice', practice_id=top.id, page=1) }}">查看>></a>
-                    </div>
-            
-                     <div class="panel-footer">
-                    {% if top.user.nick_name != None %}
-                        <a href="{{ url_for('tiezi.base_user_inform', username=top.user.username) }}">
-                        by:{{ top.user.nick_name }}
-                       </a>
-                    {% else %}
-                        <a href="{{ url_for('tiezi.base_user_inform', username=top.user.username) }}">
-                        by:{{ top.user.username }}
-                        </a>
-                    {% endif %} 
-                      on : {{ top.publish_date | deal_time() }}
-
-                      ans : {{ top.answers.all() | length }} 
-                      </div>
-                </div>      
-
-            {% for practice in qualified_practices.items %}
-                <div class="panel panel-success">
-
-                    <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id,page=1) }}"><h4> {{ practice.title }}</a></h4></div>                
-                    <div class="panel-body">
-                        {{ practice.text | truncate(500) | delete_html() }}
-
-                        <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
-                    </div>
-            
-                     <div class="panel-footer">
-                    {% if practice.user.nick_name != None %}
-                        <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
-                        by:{{ practice.user.nick_name }}
-                       </a>
-                    {% else %}
-                        <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
-                        by:{{ practice.user.username }}
-                        </a>
-                    {% endif %} 
-                      on : {{ practice.publish_date | deal_time() }}
-
-                      ans : {{ practice.answers.all() | length }}
-                    {# 不是置顶 添加置顶选项 仅对用户角色为test_builder可见 #}
-                    {% for role in current_user.roles %}
-                     {% if role.name == 'test_builder' %}
-                      {% if practice.is_top == False %}  
-                        <form class="radio-inline" method="POST" action="{{ url_for('.alter_practice_attr', id=practice.id) }}">
-                          {{ form.hidden_tag() }}
-                          <div class="radio-inline">
-                          {{ form.is_top.label }}
-                            {% if form.is_top.errors %}
-                              {% for e in form.is_top.errors %}
-                               <p class="help-block">{{ e }}/p>
-                              {% endfor %}
-                            {% endif %}
-                            {{ form.is_top(class_="radio-inline",value=practice.is_top) }}
-                          </div>
-                          <input class="" type="submit" value="update">
-                      {% endif %} 
-                     {% endif %}
-                    {% endfor %}
-                          
-        
-                        </form>
-
-                                    
-                    </div>
-                </div>
-  
-            {% endfor %}
-        {{ render_qualified_pagination(qualified_practices, '.home') }}
-
-
-        </div>
-        {% for role in current_user.roles %}
-        {% if role.name == 'test_builder' %}
-        <div class="col-lg-9">
-        <hr>
-        <p>以下仅对test_builder用户可见：</p>
-            {% for practice in unqualified_practices.items %}
-                <div class="panel panel-info">
-                    <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}"><h4>{{ practice.title }}</a></h4></div>
-
-                    <div class="panel-body">
-                        {{ practice.text | truncate(500) | get_text() }}
-
-                        <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
-                    </div>
-                   <div class="panel-footer">
-                        {% if practice.user.nick_name != None %}
-                            <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
-                            by:{{ practice.user.nick_name }}
-                           </a>
-                        {% else %}
-                            <a href="{{ url_for('tiezi.base_user_inform', username=practice.user.username) }}">
-                            by:{{ practice.user.username }}
-                            </a>
-                        {% endif %} 
-                          on : {{ practice.publish_date | deal_time() }}
-                           ans : {{ practice.answers.all() | length }}
-                            <form class="radio-inline" method="POST" action="{{ url_for('.alter_practice_attr', id=practice.id) }}">
-                              {{ form.hidden_tag() }}
-                              {#
-                              <div class="radio-inline">
-                              {{ form.is_top.label }}
-                                {% if form.is_top.errors %}
-                                  {% for e in form.is_top.errors %}
-                                   <p class="help-block">{{ e }}/p>
-                                  {% endfor %}
-                                {% endif %}
-                                {{ form.is_top(class_="radio-inline",value=practice.is_top) }}
-                              </div>
-                              #}
-                              <div class="radio-inline">
-                              {{ form.is_qualified.label }}
-                                {% if form.is_qualified.errors %}
-                                  {% for e in form.is_qualified.errors %}
-                                   <p class="help-block">{{ e }}/p>
-                                  {% endfor %}
-                                {% endif %}
-                                {{ form.is_qualified(class_="radio-inline",value=practice.is_qualified) }}
-                              </div>
-                              <input class="" type="submit" value="update">
-            
-                            </form>
-                                   
-                    </div> 
-                </div>    
-            {% endfor %}
-            {{ render_unqualified_pagination(unqualified_practices, '.home') }}
- 
-            
-        </div>
-        {% endif %}
-        {% endfor %}
-
-{#<!--         <div class="col-lg-9">
-            {% for practice in practices.items %}
-                <div>
-                    <div class="col-lg-12"><a href="{{ url_for('.practice', practice_id=practice.id) }}"><h4>{{ practice.title }}</a></h4></div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        {{ practice.text | truncate(500) | delete_html() }}
-
-                        <a href="{{ url_for('.practice', practice_id=practice.id) }}">查看>></a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div> -->
-        <!-- <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title">面板标题</h3>
-            </div>
-            <div class="panel-body">
-                这是一个基本的面板
-            </div>
-        </div> -->
-#}       
-        <div class="col-lg-3">
-{#           <!-- <div class="row">
-                <h5>新贴</h5>
-                <ul>
-                    {% for practice in recent %}
-                        <li><a href="{{ url_for('.practice', practice_id=practice.id) }}">{{ practice.title }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div> -->
-#} 
-            {# 
-            <div class="row">
-                <h5><span class="glyphicon glyphicon-fire"></span>Hot</h5>
-                <ul>
-                    {% for tag in top_tags %}
-                        <li><a href="{{ url_for('.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-            #}
-        </div>
-    </div>
-
-
-{% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#==================

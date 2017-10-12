@@ -106,7 +106,12 @@ class LoginForm(Form):
 class RegisterForm(Form):
     username = StringField(u'用户名',[DataRequired(),Length(max=255)])
     password = PasswordField(u'密码',[DataRequired(),Length(min=8)])
-    verify_code = StringField(u'验证码',[DataRequired(),Length(max=255)])
+    confirm = PasswordField('确认密码', 
+              [DataRequired(),
+               EqualTo('password')])
+                 
+    # recaptcha = RecaptchaField()
+    # verify_code = StringField(u'验证码',[DataRequired(),Length(max=255)])
     def validate(self):
         #检验输入是否合法
         check_validate = super(RegisterForm, self).validate()
@@ -163,6 +168,11 @@ class PracticeForm(Form):
 
     text = TextAreaField(u'练习内容', [DataRequired()])
 
+class PracticeAttrForm(Form):
+    is_top = BooleanField(u"置顶")
+    is_qualified = BooleanField(u"审核通过")
+
+
 class AnswerCommentForm(Form): 
  
     text = TextAreaField(u'评论', validators=[DataRequired()])
@@ -199,4 +209,59 @@ class SharingForm(Form):
         return True
 
 
+#==========================================
 
+# class LoginForm(Form):
+#     username = StringField('Username', [DataRequired(), Length(max=255)])
+#     password = PasswordField('Password', [DataRequired()])
+#     remember = BooleanField("Remember Me")
+
+#     def validate(self):
+#         check_validate = super(LoginForm, self).validate()
+
+#         # if our validators do not pass
+#         if not check_validate:
+#             return False
+
+#         # Does our the exist
+#         user = User.query.filter_by(username=self.username.data).first()
+#         if not user:
+#             self.username.errors.append('Invalid username or password')
+#             return False
+
+#         # Do the passwords match
+#         if not user.check_password(self.password.data):
+#             self.username.errors.append('Invalid username or password')
+#             return False
+
+#         return True
+
+
+# class OpenIDForm(Form):
+#     openid = StringField('OpenID URL', [DataRequired(), URL()])
+
+
+# class RegisterForm(Form):
+#     username = StringField('Username', [DataRequired(), Length(max=255)])
+#     password = PasswordField('Password', [DataRequired(), Length(min=8)])
+#     confirm = PasswordField('Confirm Password', [
+#         DataRequired(),
+#         EqualTo('password')
+#     ])
+#     recaptcha = RecaptchaField()
+
+#     def validate(self):
+#         check_validate = super(RegisterForm, self).validate()
+
+#         # if our validators do not pass
+#         if not check_validate:
+#             return False
+
+#         user = User.query.filter_by(username=self.username.data).first()
+
+#         # Is the username already being used
+#         if user:
+#             self.username.errors.append("User with that name already exists")
+#             return False
+
+#         return True

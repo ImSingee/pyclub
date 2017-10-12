@@ -11,7 +11,6 @@ from webapp.models import Practice, AnswerComment, Answer
 
 
 from gevent.wsgi import WSGIServer
-from robot import robot_run
 
 
 #应用工厂模式，这里默认使用dev配置进行=================
@@ -135,6 +134,15 @@ def setup_db_test():
         new_pracice.user= admin
         new_pracice.text = "this is top practice"
         new_pracice.is_top = True
+        new_pracice.dynamic_date = datetime.datetime.now()
+        new_pracice.published_date = datetime.datetime.now()
+        db.session.add(new_pracice)
+
+    for i in range(200, 250):
+        new_pracice = Practice("Practice{}".format(i))
+        new_pracice.user= admin
+        new_pracice.text = "this is qualified practice"
+        new_pracice.is_top = False
         new_pracice.dynamic_date = datetime.datetime.now()
         new_pracice.published_date = datetime.datetime.now()
         db.session.add(new_pracice)

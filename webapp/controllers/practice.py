@@ -5,11 +5,11 @@ from os import path
 from sqlalchemy import func
 from flask import render_template, Blueprint, flash
 from webapp.models import db, Post, Tag, Comment, User, tags, Note
-from webapp.forms import AnswerForm, PracticeForm, AnswerCommentForm
+from webapp.forms import AnswerForm, PracticeForm, AnswerCommentForm, PracticeAttrForm
 from flask import redirect, url_for
 from flask import g, session, abort
 from flask_login import login_required, current_user
-from webapp.extensions import poster_permission, admin_permission
+from webapp.extensions import poster_permission, admin_permission, test_builder_permission
 from flask_principal import Permission, UserNeed
 
 #===========================================================
@@ -73,18 +73,29 @@ def check_user():
         
 #=====================================================
 @practice_blueprint_.route('/')
-@practice_blueprint_.route("/<int:page>")
-def home(page=1):
-    # return "hello world %s" % page
-    tops = Practice.query.filter_by(is_top=True).order_by(Practice.dynamic_date.desc()).paginate(1,2)
-    practices = Practice.query.filter_by(is_top=False).order_by(Practice.dynamic_date.desc()).paginate(page, 10)
+@practice_blueprint_.route("/<int:qualified_page>/<int:unqualified_page>")
+def home(qualified_page=1, unqualified_page=1):
+    #合格且置顶
+    try:
+        top = Practice.query.filter_by(is_top=True, is_qualified=True).order_by(Practice.id).one()
+    except Exception as e:
+        print(e)
+
+    #合格
+    qualified_practices = Practice.query.filter_by(is_qualified=True, is_top=False).order_by(Practice.publish_date.desc()).paginate(qualified_page, 5)
+    #不合格且不是置顶
+    unqualified_practices = Practice.query.filter_by(is_qualified=False).order_by(Practice.publish_date.desc()).paginate(unqualified_page, 5)
     recent, top_tags = sidebar_data()
     not_viewed_inform_num = get_not_viewed_inform_num()
     note = get_note()
+    form = PracticeAttrForm()
+
     return render_template(
         'practices.html',
-        tops=tops,
-        practices=practices,
+        form=form,
+        top=top,
+        unqualified_practices=unqualified_practices,
+        qualified_practices=qualified_practices,
         recent=recent,
         top_tags=top_tags,
         AnswerComment=AnswerComment,
@@ -110,7 +121,6 @@ def practice(practice_id, page=1):
         db.session.add(new_answer)
         db.session.commit()
         flash("解答已经成功提交.", category="success")
-
 
     practice = Practice.query.get_or_404(practice_id)
     # answers = practice.answers.order_by(Answer.date.desc()).all()
@@ -260,7 +270,44 @@ def new_practice():
                             not_viewed_inform_num=not_viewed_inform_num,
                             note=note)
 
+#==========================
+@practice_blueprint_.route('/alter_practice_attr/<int:id>', methods=['GET', 'POST'])
+@login_required
+@test_builder_permission.require(http_exception=403)
+def alter_practice_attr(id):
+    form = PracticeAttrForm()
+    practice = Practice.query.get_or_404(id)
+    if test_builder_permission.can() or admin_permission.can():
+        if form.validate_on_submit():
 
+            #仅仅留下一个置顶
+            if form.is_top.data == True:
+                tops = Practice.query.filter_by(is_top=True).all()
+                for top in tops:
+                    top.is_top = False
+                    top.is_qualified = True
+                    db.session.add(top)
+                practice.is_top = form.is_top.data
+                #能被置顶的都是通过审核的选项， 故 is_qualified设置为TRUE
+                #因为表单有两个选项，但是模板中供显示在页面供用户选择的只有一个选项
+                #如果不在这里设定为True，将以默认值提交
+                practice.is_qualified = True   
+                db.session.add(practice)
+
+            if form.is_qualified.data == True:
+                practice.is_qualified = form.is_qualified.data
+
+            
+            db.session.commit()
+            flash(u"练习属性修改成功", category="success")
+            return redirect(url_for(".home"))
+            
+        # not_viewed_inform_num = get_not_viewed_inform_num()
+        # note = get_note()
+        # return render_template('practices.html',
+        #                         form=form,
+        #                         not_viewed_inform_num=not_viewed_inform_num,
+        #                         note=note)
 # #===================================================
 
 # @practice_blueprint_.route('/new', methods=['GET', 'POST'])
