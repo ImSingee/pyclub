@@ -172,6 +172,7 @@ def delete_practice(id):
     if permission.can() or admin_permission.can():
         db.session.delete(practice)
         db.session.commit()
+        flash("练习已经删除.", category="success")
         return redirect(url_for('practice_.home'))
     abort(403)
 
@@ -184,6 +185,7 @@ def delete_answer(id):
     if permission.can() or admin_permission.can():
         db.session.delete(answer)
         db.session.commit()
+        flash("回答已经删除.", category="success")
         return redirect(url_for('practice_.practice', practice_id=practice_id, page=1))
     abort(403)
 
@@ -204,6 +206,7 @@ def edit_practice(id):
 
             db.session.add(practice)
             db.session.commit()
+            flash("练习已经提交.", category="success")
 
             return redirect(url_for('.edit_practice', id=practice.id))
         form.text.data = practice.text
@@ -235,6 +238,7 @@ def edit_answer(id):
         form.text.data = answer.text
         note = get_note()
         not_viewed_inform_num = get_not_viewed_inform_num()
+        flash("回答已经成功提交", category="success")
         return render_template('edit_answer.html',
                                 form=form,
                                 answer=answer,
@@ -262,6 +266,7 @@ def new_practice():
         ).one()
         db.session.add(new_practice)
         db.session.commit()
+        flash("练习已经成功提交.", category="success")
         
     not_viewed_inform_num = get_not_viewed_inform_num()
     note = get_note()
