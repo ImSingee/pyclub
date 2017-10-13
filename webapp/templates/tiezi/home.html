@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 {% block title %}动态首页{% endblock %}
 {% block body %}
+
+        
+ 
     <div class="row">
         <div class="col-lg-9">
+        <h1><small>帖子</small></h1>
             {% for post in tops.items %}
                 <div class="panel panel-success">
                     <div class="panel-heading"><a href="{{ url_for('.post', post_id=post.id) }}"><h4>【置顶】  {{ post.title }}</a></h4></div>

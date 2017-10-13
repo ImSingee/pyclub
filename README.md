@@ -57,8 +57,13 @@ run the server:
 `(my_env)$ python manage.py gserver`  
 
 #### real run:
-initiate databse:       
+
+initiate databse:
+
+remove the existed database.db first
+
 `(my_env)$ python manage.py setup_db_real`  
+
 
 run the server:       
 `(my_env)$ python manage.py gserver`  
