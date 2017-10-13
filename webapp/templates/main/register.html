@@ -39,42 +39,20 @@
           {% endif %}
           {{ form.confirm(class_='form-control') }}
       </div>
-      {#
       <div class="form-group">
-          {{ form.recaptcha.label }}
-          {% if form.recaptcha.errors %}
-              {% for e in form.recaptcha.errors %}
+          {{ form.key.label }}
+          {% if form.key.errors %}
+              {% for e in form.key.errors %}
                   <p class="help-block">{{ e }}</p>
               {% endfor %}
           {% endif %}
-          {{ form.recaptcha() }}
-      </div>#}
-
-
-
-
-
-    {#   {% if form.errors.verify_code %}
-      <div class="form-group has-error required">
-      {{ form.verify_code.label(class="control-label") | safe }}
-      {{ form.verify_code(class="form-control", required=True) }}
-      {% for error in form.errors.verify_code %}
-        <p class="help-block">{{ error }}</p>
-      {% endfor %}
-      </div>
-      {% else %}
-      <div class="form-group required">
-      {{ form.verify_code.label(class="control-label") | safe }}
-      <label class="control-label"><img src="{{ url_for('static', filename='image/code/'+'code_img.jpg') }}"</label>
-      {{ form.verify_code(class="form-control", required=True) }}
-      </div>
-      {% endif %}#}
-       
+          {{ form.key(class_='form-control') }}
+      </div>       
      <input class="btn btn-primary" type="submit" value="注册">
   </form>
   <br>
   <br>
-  <span><a href="{{ url_for('main.admin_register') }}">管理员注册通道>></a><span>
+
 </div>
 {% endblock %}
 

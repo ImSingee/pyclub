@@ -2,7 +2,7 @@
 import datetime
 from flask import Blueprint, render_template
 
-from webapp.forms import LoginForm, RegisterForm, AdminRegisterForm
+from webapp.forms import LoginForm, RegisterForm, RoleActivateForm
 from webapp.models import User, db, Role, RelatedPost, Note
 
 from os import path
@@ -251,22 +251,43 @@ def register():
                         not_viewed_inform_num = get_not_viewed_inform_num(),
                         note=get_note())
 
-@main_blueprint.route('/admin_register', methods=['GET', 'Post'])
-def admin_register():
-    form = AdminRegisterForm()
-    if form.validate_on_submit():
-        new_user = User(form.username.data)
 
-        new_user.set_password(form.password.data)
-        admin = Role.query.filter_by(name="admin").one()
-        new_user.roles.append(admin)
-        db.session.add(new_user)
+@main_blueprint.route('/role_activate/<string:role_name>', methods=['GET', 'POST'])
+@login_required
+def role_activate(role_name):
+    form = RoleActivateForm(role_name)
+    if form.validate_on_submit():
+        user = current_user
+        role = Role.query.filter_by(name=role_name).one()
+        user.roles.append(role)
+        db.session.add(user)
         db.session.commit()
 
-        flash("Your user has been careted as administrator please login", category="success")
-        return redirect(url_for('.login'))
+        flash("Congratulations!Your user has been careted as {}".format(role_name), category="success")
+        return redirect(url_for('practice_.home'))
 
-    return render_template('admin_register.html',
+    return render_template('role_activate.html',
                             form=form,
+                            role_name=role_name,
                             not_viewed_inform_num = get_not_viewed_inform_num(),
                             note=get_note())
+
+# @main_blueprint.route('/admin_register', methods=['GET', 'Post'])
+# def admin_register():
+#     form = AdminRegisterForm()
+#     if form.validate_on_submit():
+#         new_user = User(form.username.data)
+
+#         new_user.set_password(form.password.data)
+#         admin = Role.query.filter_by(name="admin").one()
+#         new_user.roles.append(admin)
+#         db.session.add(new_user)
+#         db.session.commit()
+
+#         flash("Your user has been careted as administrator please login", category="success")
+#         return redirect(url_for('.login'))
+
+#     return render_template('admin_register.html',
+#                             form=form,
+#                             not_viewed_inform_num = get_not_viewed_inform_num(),
+#                             note=get_note())

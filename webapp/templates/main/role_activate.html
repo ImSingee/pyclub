@@ -1,0 +1,25 @@
+{% extends "base.html" %}{# 继承模板 #}
+{% block title %} 管理员身份激活 {% endblock %}{# 修改替换 #}
+{% block body %}
+<div class="col-lg-12">
+
+  <form method="POST" action="{{ url_for('main.role_activate', role_name=role_name)}}"> {# url_for返回视图函数名字对应url #}
+    {{ form.hidden_tag() }}<!--自动加入预防跨站请求的伪造机制--> 
+      <div class="form-group">
+          {{ form.key.label }}
+          {% if form.key.errors %}
+              {% for e in form.key.errors %}
+                  <p class="help-block">{{ e }}</p>
+              {% endfor %}
+          {% endif %}
+          {{ form.key(class_='form-control') }}
+      </div>       
+     <input class="btn btn-primary" type="submit" value="激活">
+  </form>
+  <br>
+  <br>
+
+</div>
+{% endblock %}
+
+

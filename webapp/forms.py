@@ -109,6 +109,7 @@ class RegisterForm(Form):
     confirm = PasswordField('确认密码', 
               [DataRequired(),
                EqualTo('password')])
+    key = PasswordField(u'邀请码',[DataRequired(),Length(max=255)])
                  
     # recaptcha = RecaptchaField()
     # verify_code = StringField(u'验证码',[DataRequired(),Length(max=255)])
@@ -128,32 +129,71 @@ class RegisterForm(Form):
                               u'用户名已经存在'
                               )
             return False
+        #默认角色邀请码 检查
+        key_string = SecretKey.query.filter_by(name="default_key").first().key_string
+        if self.key.data != key_string:
+            self.key.errors.append(
+                  u"邀请码不正确→_→"
+                  )
+            return False
         return True
 
-class AdminRegisterForm(Form):
-    username = StringField(u'用户名',[DataRequired(),Length(max=255)])
-    password = PasswordField(u'密码',[DataRequired(),Length(min=8)])
-    invite_code = StringField(u"邀请码",[DataRequired(),Length(max=12)])
+class RoleActivateForm(Form):
+
+    key = StringField(u'邀请码',[DataRequired(),Length(max=255)])
+
+
+    def __init__(self, role_name):
+        super(RoleActivateForm, self).__init__()
+        self.role_name = role_name
+        
+
+
     def validate(self):
         #检验输入是否合法
-        check_validate = super(AdminRegisterForm, self).validate()
+        check_validate = super(RoleActivateForm, self).validate()
 
         if not check_validate:
             return False
-        #检验用户是否存在
-        user = User.query.filter_by(
-                           username = self.username.data
-                           ).first()
-        
-        if user:
-            self.username.errors.append(
-                              u'用户名已经存在'
-                              )
+        #检验秘钥
+        #角色名 和 角色对应邀请码的名字一致，可以用角色名查找对应对应邀请码
+        print(self.role_name)
+        self.key_name = "{}_key".format(self.role_name)
+
+        key_string = SecretKey.query.filter_by(name=self.key_name).first().key_string
+        if self.key.data != key_string:
+            self.key.errors.append(
+                  u"邀请码不正确→_→"
+                  )
             return False
-        # if self.invite_code.data != InviteCode.query.filter_by(id=1).one().invite_code:
-        #     self.invite_code.errors.append(u"邀请码不正确哦亲")
-        #     return False
         return True
+
+
+
+# class AdminRegisterForm(Form):
+#     username = StringField(u'用户名',[DataRequired(),Length(max=255)])
+#     password = PasswordField(u'密码',[DataRequired(),Length(min=8)])
+#     invite_code = StringField(u"邀请码",[DataRequired(),Length(max=12)])
+#     def validate(self):
+#         #检验输入是否合法
+#         check_validate = super(AdminRegisterForm, self).validate()
+
+#         if not check_validate:
+#             return False
+#         #检验用户是否存在
+#         user = User.query.filter_by(
+#                            username = self.username.data
+#                            ).first()
+        
+#         if user:
+#             self.username.errors.append(
+#                               u'用户名已经存在'
+#                               )
+#             return False
+#         # if self.invite_code.data != InviteCode.query.filter_by(id=1).one().invite_code:
+#         #     self.invite_code.errors.append(u"邀请码不正确哦亲")
+#         #     return False
+#         return True
 
 #练习
 class AnswerForm(Form): 
