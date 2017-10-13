@@ -5,13 +5,18 @@ from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand
 
 from webapp import create_app
-from webapp.models import db, User, Post, Tag, Comment, Role, Sharing, RelatedPost,SecretKey
+from webapp.config import DevConfig 
+from webapp.models import db, User, Post, Tag, Comment, Role, Sharing, RelatedPost, SecretKey
 
 from webapp.models import Practice, AnswerComment, Answer
 
 
 from gevent.wsgi import WSGIServer
+#=============================================
 
+
+
+#====================================================
 
 #应用工厂模式，这里默认使用dev配置进行=================
 env = os.environ.get('WEBAPP_ENV', 'dev')
@@ -33,6 +38,12 @@ manager.add_command("db", MigrateCommand)
 #也可以尝试将迁移记录和git记录关联起来
 #==============================================
 
+ADMIN_KEY = DevConfig.ADMIN_KEY
+ADMIN_PASSWORD = DevConfig.ADMIN_PASSWORD
+TEST_BUILDER_KEY = DevConfig.TEST_BUILDER_KEY
+DEFAULT_KEY = DevConfig.DEFAULT_KEY
+SHARING_TOKEN = DevConfig.SHARING_TOKEN
+#=============================================
 
 @manager.shell
 def make_shell_context():
@@ -165,54 +176,100 @@ def setup_db_test():
     db.session.commit()
     print("database init done")
 
-
+#需要先删除现存的数据库
 @manager.command
 def setup_db_real():
-    #表初始化
-    db.create_all()
 
-    #初始角色创建
+    #表初始化======================
+    db.create_all()
+    
+    #角色创立========================
     admin_role = Role('admin')
- 
-    admin_role.description = 'administrator of this systerm'
+    admin_role.description = u"管理员"
     db.session.add(admin_role)
 
     default_role = Role('default')
-
-    default_role.description = 'default'
+    default_role.description = u"默认角色"
     db.session.add(default_role)
 
-    admin = User("admin")
-    admin.set_password("hjkl;'")
+    #出题人角色
+    test_builder_role = Role('test_builder')
+    test_builder_role.description = u"出题人"
+    db.session.add(test_builder_role)
 
-    #多重身份
+    #第一位管理员======================
+    admin = User("admin")
     admin.roles.append(admin_role)
     admin.roles.append(default_role)
+    admin.roles.append(test_builder_role)
+    admin.set_password(ADMIN_PASSWORD)
     db.session.add(admin)
-    
-    # invc = InviteCode()
-    # invc.invite_code = "5201314666"
-    # db.session.add(invc)
 
-    # 第一篇文章
-    new_post = Post("第一篇文章")
+    #创建几个秘钥===========================
+    s = SecretKey()
+    s.name = "sharing_token"
+    s.key_string = SHARING_TOKEN
+    db.session.add(s)
+
+
+    
+    #几个邀请、激活码=========================
+    #管理员邀请码
+    admin_key = SecretKey()
+    admin_key.name = "admin_key"
+    admin_key.key_string = ADMIN_KEY
+    db.session.add(admin_key)
+
+    #出题人邀请码
+    test_builder_key = SecretKey()
+    test_builder_key.name = "test_builder_key"
+    test_builder_key.key_string = TEST_BUILDER_KEY
+    db.session.add(test_builder_key)
+
+    #默认用户邀请码
+    default_key = SecretKey()
+    default_key.name = "default_key"
+    default_key.key_string = DEFAULT_KEY
+    db.session.add(default_key)
+    
+    #======================
+    #第一篇文章
+    new_post = Post(u"第一篇文章")
     new_post.user= admin
     new_post.text = "THIS IS the first text published by admin"
     new_post.dynamic_date = datetime.datetime.now()
     new_post.published_date = datetime.datetime.now()
     db.session.add(new_post)
     #第一篇置顶置顶文章
-    new_post = Post("第一篇置顶文章")
+    new_post = Post(u"第一篇置顶文章")
     new_post.user= admin
-    new_post.text = "这是第一篇置顶文章"
+    new_post.text = u"这是第一篇置顶文章"
     new_post.dynamic_date = datetime.datetime.now()
     new_post.published_date = datetime.datetime.now()
     new_post.is_top = True
     db.session.add(new_post)
+    #第一篇练习
+    new_pracice = Practice("Practice{}".format(1))
+    new_pracice.user= admin
+    new_pracice.text = "this is top practice"
+    new_pracice.is_top = True
+    new_pracice.is_qualified = True
+    new_pracice.dynamic_date = datetime.datetime.now()
+    new_pracice.published_date = datetime.datetime.now()
+    db.session.add(new_pracice)
+
     db.session.commit()
 
 
     
+
+
+    
+
+
+  
+
+
 #gevent部署
 
 
