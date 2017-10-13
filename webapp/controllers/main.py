@@ -259,11 +259,13 @@ def role_activate(role_name):
     if form.validate_on_submit():
         user = current_user
         role = Role.query.filter_by(name=role_name).one()
-        user.roles.append(role)
-        db.session.add(user)
-        db.session.commit()
-
-        flash("Congratulations!Your user has been careted as {}".format(role_name), category="success")
+        if role in current_user.roles:
+            flash("你已经是{}，不需要重复激活".format(role_name), category="danger")
+        else:
+            user.roles.append(role)
+            db.session.add(user)
+            db.session.commit()
+            flash("Congratulations!你已经成为了{}".format(role_name), category="success")       
         return redirect(url_for('practice_.home'))
 
     return render_template('role_activate.html',

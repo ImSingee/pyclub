@@ -76,6 +76,10 @@
             <button type="button" class="btn btn-default btn-xs">
                 <span class="glyphicon glyphicon-user"></span>{{ current_user.username }}
             </button>
+
+            <span class="glyphicon glyphicon-star"><a href="{{ url_for('main.role_activate', role_name='admin') }}">管理员权限激活</a></span>
+            <span>  </span>
+            <span class="glyphicon glyphicon-star"><a href="{{ url_for('main.role_activate', role_name='test_builder') }}">出题者权限激活</a></span>
             <ul class="nav nav-tabs">
                 <li  class="active">
                     <a href="{{ url_for('.user_admin') }}">tiezi</a>

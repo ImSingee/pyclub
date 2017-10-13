@@ -140,7 +140,7 @@ class RegisterForm(Form):
 
 class RoleActivateForm(Form):
 
-    key = StringField(u'邀请码',[DataRequired(),Length(max=255)])
+    key = PasswordField(u'邀请码',[DataRequired(),Length(max=255)])
 
 
     def __init__(self, role_name):
