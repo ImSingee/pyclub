@@ -272,6 +272,7 @@ def new_post():
 
 
 @tiezi_blueprint.route('/post/<int:post_id>',methods=['GET','POST'])
+@login_required
 def post(post_id):
     form = CommentForm() # 实例化一个前面定义的CommentForm()对象
     if form.validate_on_submit():

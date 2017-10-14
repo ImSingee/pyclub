@@ -107,6 +107,7 @@ def home(qualified_page=1, unqualified_page=1):
 #练习的具体页面
 
 @practice_blueprint_.route('/practice/<int:practice_id>/<int:page>', methods=['GET','POST'])
+@login_required
 def practice(practice_id, page=1):
 
     form = AnswerForm()
@@ -146,6 +147,7 @@ def practice(practice_id, page=1):
 #====================================================================
 #给解答添加评论
 @practice_blueprint_.route('/add_answer_comment/<int:answer_id>', methods=['GET','POST'])
+@login_required
 def add_answer_comment(answer_id):
     answer_comment_form = AnswerCommentForm()
     if answer_comment_form.validate_on_submit():
