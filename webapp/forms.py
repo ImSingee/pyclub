@@ -67,7 +67,7 @@ class PostForm(Form):
 
     title = StringField(u'标题', [DataRequired(), Length(max=255)])
 
-    text = TextAreaField(u'文章内容', [DataRequired()])
+    text = TextAreaField(u'内容', [DataRequired()])
 
  
 
