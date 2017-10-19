@@ -45,7 +45,7 @@
           margin:5px auto;
       }
 
-      .nav li {padding-left: 40px}  
+      .nav li {padding-left: 40px;}  
 
       #web_title {padding-left: 130px} 
 
@@ -67,22 +67,22 @@
 
     {# 顶端 的导航栏#}
 
-    <nav class="navbar navbar-inverse " role="nav_head">
+    <nav class="navbar navbar-inverse" role="nav_head">
 	    <div class="navbar-header" id="web_title">
 	          <div class="navbar-header">
-	            <a class="navbar-brand" href="{{ url_for('practice_.home') }}">17 py club</a>
+	            <a class="navbar-brand  active" href="{{ url_for('practice_.home') }}">17 py club</a>
 	            {#
 		        <a class="navbar-brand" href="#"><a><span class="glyphicon glyphicon-volume-up"></span></a> ：{{ note.text | truncate(150)}}</a>
 		        #}
 	          </div>
 	    </div>
 	    <ul class="nav navbar-nav navbar-left" id="left_ul">
-	      <li><a href="{{ url_for('practice_.home') }}"><span class="glyphicon glyphicon-home"></span></a></li>
-	      <li><a href="{{ url_for('tiezi.home') }}"><span class="glyphicon glyphicon-eye-open"></span></a></li>
-	      <li><a href="{{ url_for('sharing_.sharing') }}"><span class="glyphicon glyphicon-link"></span></a></li>
+	      <li class="active"><a href="{{ url_for('practice_.home') }}"><span class="glyphicon glyphicon-home"></span></a></li>
+	      <li class="active"><a href="{{ url_for('tiezi.home') }}"><span class="glyphicon glyphicon-eye-open"></span></a></li>
+	      <li class="active"><a href="{{ url_for('sharing_.sharing') }}"><span class="glyphicon glyphicon-link"></span></a></li>
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right" id="right_ul">  
-	      <li class="dropdown">
+	      <li class="dropdown  active">
 	            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 	             <span class="glyphicon glyphicon-pencil"></span>
 	              <b class="caret"></b>
@@ -95,7 +95,7 @@
 	                  <span class="glyphicon glyphicon-pencil"></span>发帖</a></li>
 	            </ul>
 	      </li>
-	      <li class="dropdown">
+	      <li class="dropdown  active">
 	            {% if not current_user.username %}
 	            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 	             <span class="glyphicon glyphicon-user"></span>?
