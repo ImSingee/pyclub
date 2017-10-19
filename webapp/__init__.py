@@ -2,6 +2,8 @@
 
 import os
 import re
+
+from markdown import markdown
 from flask import Flask, redirect, url_for
 
 from webapp.models import db, User, Post, Tag, Comment, Role, Sharing, RelatedPost, Note, SecretKey
@@ -191,6 +193,7 @@ def create_app(object_name):
     app.jinja_env.filters['delete_html']=delete_html
     app.jinja_env.filters['deal_time']=deal_time
     app.jinja_env.filters['get_text']=get_text
+    app.jinja_env.filters['markdown']=markdown
     return app
 
 

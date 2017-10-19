@@ -4,6 +4,7 @@
 
 
 <div class="col-lg-12">
+   
 	
 	<form method="POST" action="{{ url_for('practice_.new_practice') }}">
 	  {{ form.hidden_tag() }}
@@ -31,10 +32,18 @@
 	  <input class="btn btn-primary" type="submit" value="提交">
 	  
 	</form>
+
 </div>
 
-<script type="text/javascript" src="/static/ckeditor/ckeditor.js"></script>
-<script>editor=CKEDITOR.replace('editor');</script>
+<!-- <script type="text/javascript" src="/static/ckeditor/ckeditor.js"></script>
+<script>editor=CKEDITOR.replace('editor');</script> -->
+<link rel="stylesheet" href="http://lab.lepture.com/editor/editor.css" />
+<script type="text/javascript" src="http://lab.lepture.com/editor/editor.js"></script>
+<script type="text/javascript" src="http://lab.lepture.com/editor/marked.js"></script>
+<script type="text/javascript">
+var editor = new Editor();
+editor.render();
+</script>
 <br>
 <br>
 <br>
