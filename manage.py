@@ -261,14 +261,6 @@ def setup_db_real():
     db.session.commit()
 
 
-    
-
-
-    
-
-
-  
-
 
 #gevent部署
 
@@ -284,11 +276,6 @@ def gserver(port=2333):
     gserver_run(port=port)
 
     
-
-@manager.command
-def robot():
-    print('running robot')
-    robot_run()
 
 
 
