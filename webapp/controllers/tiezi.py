@@ -51,7 +51,7 @@ def get_note():
         db.session.commit()
         get_note()
 #==============================================================
-#2博客 蓝图实例
+#蓝图实例
 tiezi_blueprint = Blueprint(
     'tiezi',
     __name__,
