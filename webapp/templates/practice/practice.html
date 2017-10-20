@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="panel-body">
-                    {{ practice.text | safe }}
+                    {{ practice.text | markdown | safe }}
                 </div>
                 
                 <div class="panel-footer">by:{{ practice.user.username }} 
@@ -89,7 +89,7 @@
                 <div class="col-lg-12">
                     <form method="post" action="{{ url_for('.practice', practice_id=practice.id, page=1) }}">
                         {{ form.hidden_tag() }}
-                        <div class="form-group">
+                        <div class="form-group" id="markdown">
                             {{ form.text.label }}
                             {% if form.text.errors %}
                                 {% for e in form.text.errors %}
@@ -121,7 +121,7 @@
                                         <a data-toggle="collapse" data-parent="#accordion" 
                                            href="#{{ answer.id }}" >
 
-                                            {{ answer.text | truncate(250) | get_text}}
+                                            {{ answer.text | truncate(256) }}
                                         <button type="button" class="btn btn-default btn-sm">
                                             <span class="">查看/隐藏</span> 
                                         </button>
@@ -130,7 +130,7 @@
                                 </div>
                                 <div id="{{ answer.id }}" class="panel-collapse collapse">
                                     <div class="panel-body">
-                                    {{ answer.text | safe }}
+                                    {{ answer.text | markdown | safe }}
 
                                     </div>
                                 </div>
@@ -229,7 +229,14 @@
     </div>
 {% endblock %}
 {% block js %} 
-<script type="text/javascript" src="/static/ckeditor/ckeditor.js"></script>
-<script>editor=CKEDITOR.replace('editor');</script>
+<!-- <script type="text/javascript" src="/static/ckeditor/ckeditor.js"></script>
+<script>editor=CKEDITOR.replace('editor');</script> -->
+<link rel="stylesheet" href="http://lab.lepture.com/editor/editor.css" />
+<script type="text/javascript" src="http://lab.lepture.com/editor/editor.js"></script>
+<script type="text/javascript" src="http://lab.lepture.com/editor/marked.js"></script>
+<script type="text/javascript">
+var editor = new Editor();
+editor.render();
+</script>
 {% endblock %}
 {# 注意一下静态文件的路径 #}
