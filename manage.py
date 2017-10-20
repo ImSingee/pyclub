@@ -1,6 +1,13 @@
 # coding=utf-8
 
+<<<<<<< HEAD
 import os, time, datetime
+=======
+#!/usr/bin/python
+# -*- coding: utf-8-*-
+
+import os, time, datetime 
+>>>>>>> up/master
 from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand
 
@@ -242,6 +249,7 @@ def setup_db_real():
     new_post.text = "THIS IS the first text published by admin"
     new_post.dynamic_date = datetime.datetime.now()
     new_post.published_date = datetime.datetime.now()
+    new_post.is_published = True
     db.session.add(new_post)
 
     # 第一篇置顶置顶文章
@@ -251,6 +259,7 @@ def setup_db_real():
     new_post.dynamic_date = datetime.datetime.now()
     new_post.published_date = datetime.datetime.now()
     new_post.is_top = True
+    new_post.is_published = True
     db.session.add(new_post)
 
     # 第一篇练习
@@ -266,9 +275,6 @@ def setup_db_real():
     db.session.commit()
 
 
-# gevent部署
-
-
 def gserver_run(port):
     server = WSGIServer(('0.0.0.0', port), app)
     print('listening on port:', port)
@@ -278,7 +284,6 @@ def gserver_run(port):
 @manager.command
 def gserver(port=2333):
     gserver_run(port=port)
-
 
 # @manager.command
 # def robot():

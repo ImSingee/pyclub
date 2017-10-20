@@ -19,7 +19,7 @@
         {{ form.title(class_='form-control')}}
 	  </div>
 
-	  <div class="form-group">
+	  <div class="form-group" id="markdown">
 	  <!-- {{ form.text.label }} -->
 	  <strong>贴子内容</strong>
 	  {% if form.text.errors %}
@@ -45,8 +45,16 @@
 <br>
 <br>
 <br>
+<link rel="stylesheet" href="http://lab.lepture.com/editor/editor.css" />
+<script type="text/javascript" src="http://lab.lepture.com/editor/editor.js"></script>
+<script type="text/javascript" src="http://lab.lepture.com/editor/marked.js"></script>
+<script type="text/javascript">
+var editor = new Editor();
+editor.render();
+</script>
 
 {% endblock %}
+
 
 
 {# 注意一下静态文件的路径 #}
