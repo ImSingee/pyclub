@@ -42,7 +42,7 @@ create a virtual environment:
 `$virtualenv my_env`
 
 activate the virtual environment    
-`$source app_env/bin/activate`  
+`$source my_env/bin/activate`  
 
 install all independence in the virtual environment   
 `(my_env)$ pip install -r requirements.txt`  
