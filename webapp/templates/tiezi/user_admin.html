@@ -107,8 +107,11 @@
                             <a href="{{ url_for('.delete_post_in_user_admin', id=post.id) }}">
                               <span class="glyphicon glyphicon-trash"></span>
                             </a>
-                            
-                            <span>发布状态：{{ post.is_published }}</span>
+                            {% if post.is_published %}
+                            <span>状态：已经发布</span>
+                            {% else %}
+                            <span>状态：草稿</span>
+                            {% endif %}
                             
                         </div>
                     </div>
