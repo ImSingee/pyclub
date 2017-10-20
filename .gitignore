@@ -10,7 +10,8 @@
 #db.ini
 #deploy_key_rsa
 #itchat.pkl
-#migrations
+migrations
+database.db
 #
 #__pycache__
 

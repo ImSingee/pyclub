@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 
 import datetime
 from os import path
@@ -12,17 +12,21 @@ from flask_login import login_required, current_user
 from webapp.extensions import poster_permission, admin_permission, test_builder_permission
 from flask_principal import Permission, UserNeed
 
-#===========================================================
+from sqlalchemy.orm.exc import NoResultFound
+
+# ===========================================================
 from webapp.models import Practice, AnswerComment, Answer
 from markdown import markdown
-#==================================================
+
+
+# ==================================================
 
 
 def get_not_viewed_inform_num():
     try:
         if current_user.username:
             not_viewed_posts = RelatedPost.query.filter_by(is_viewed=False,
-                                                         user_id=current_user.id).all()
+                                                           user_id=current_user.id).all()
             return len(not_viewed_posts)
         else:
             return None
@@ -31,11 +35,10 @@ def get_not_viewed_inform_num():
 
 
 def sidebar_data():
-
     recent = Post.query.order_by(Post.publish_date.desc()).limit(5).all()
     top_tags = db.session.query(Tag, func.count(tags.c.post_id).label('total')
                                 ).join(tags).group_by(Tag).order_by(
-                                'total DESC').limit(5).all()
+        'total DESC').limit(5).all()
     return recent, top_tags
 
 
@@ -50,41 +53,48 @@ def get_note():
         db.session.add(note)
         db.session.commit()
         get_note()
-#==============================================================
-#2博客 蓝图实例
-#由于practice与内置的某个函数名字冲突不得已都加个下划线
+
+
+# ==============================================================
+# 2博客 蓝图实例
+# 由于practice与内置的某个函数名字冲突不得已都加个下划线
 practice_blueprint_ = Blueprint(
     'practice_',
     __name__,
     template_folder=path.join(path.pardir, 'templates', 'practice'),
     static_folder=path.join(path.pardir, 'static'),
     url_prefix='/practice'
-    )
-#=======================================================
-#开始每个响应之前检查会话对象看看是否存在username如果存在则添加到g对象
+)
+
+
+# =======================================================
+# 开始每个响应之前检查会话对象看看是否存在username如果存在则添加到g对象
 @practice_blueprint_.before_request
 def check_user():
     if 'username' in session:
         g.current_user = User.query.filter_by(
             username=session['username']
-            ).one()
+        ).one()
     else:
         g.current_user = None
-        
-#=====================================================
+
+
+# =====================================================
 @practice_blueprint_.route('/')
 @practice_blueprint_.route("/<int:qualified_page>/<int:unqualified_page>")
 def home(qualified_page=1, unqualified_page=1):
-    #合格且置顶
+    # 合格且置顶
     try:
         top = Practice.query.filter_by(is_top=True, is_qualified=True).order_by(Practice.id).one()
-    except Exception as e:
-        print(e)
+    except NoResultFound:
+        top=None
 
-    #合格
-    qualified_practices = Practice.query.filter_by(is_qualified=True, is_top=False).order_by(Practice.publish_date.desc()).paginate(qualified_page, 5)
-    #不合格且不是置顶
-    unqualified_practices = Practice.query.filter_by(is_qualified=False).order_by(Practice.publish_date.desc()).paginate(unqualified_page, 5)
+    # 合格
+    qualified_practices = Practice.query.filter_by(is_qualified=True, is_top=False).order_by(
+        Practice.publish_date.desc()).paginate(qualified_page, 5)
+    # 不合格且不是置顶
+    unqualified_practices = Practice.query.filter_by(is_qualified=False).order_by(
+        Practice.publish_date.desc()).paginate(unqualified_page, 5)
     recent, top_tags = sidebar_data()
     not_viewed_inform_num = get_not_viewed_inform_num()
     note = get_note()
@@ -103,13 +113,14 @@ def home(qualified_page=1, unqualified_page=1):
         not_viewed_inform_num=not_viewed_inform_num,
         note=note
     )
-#===============================================================
-#练习的具体页面
 
-@practice_blueprint_.route('/practice/<int:practice_id>/<int:page>', methods=['GET','POST'])
+
+# ===============================================================
+# 练习的具体页面
+
+@practice_blueprint_.route('/practice/<int:practice_id>/<int:page>', methods=['GET', 'POST'])
 @login_required
 def practice(practice_id, page=1):
-
     form = AnswerForm()
     if form.validate_on_submit():
         new_answer = Answer()
@@ -127,15 +138,12 @@ def practice(practice_id, page=1):
     # answers = practice.answers.order_by(Answer.date.desc()).all()
     answers = practice.answers.order_by(Answer.date.desc()).paginate(page, 10)
 
-    #一些侧边栏
-    not_viewed_inform_num = get_not_viewed_inform_num() 
+    # 一些侧边栏
+    not_viewed_inform_num = get_not_viewed_inform_num()
     note = get_note()
-    
+
     answer_comment_form = AnswerCommentForm()
     answer_comment_form.text.data = u'输入你的评论'
-
-    
-
 
     return render_template(
         'practice.html',
@@ -146,10 +154,12 @@ def practice(practice_id, page=1):
         form=form,
         not_viewed_inform_num=not_viewed_inform_num,
         note=note
-        )
-#====================================================================
-#给解答添加评论
-@practice_blueprint_.route('/add_answer_comment/<int:answer_id>', methods=['GET','POST'])
+    )
+
+
+# ====================================================================
+# 给解答添加评论
+@practice_blueprint_.route('/add_answer_comment/<int:answer_id>', methods=['GET', 'POST'])
 @login_required
 def add_answer_comment(answer_id):
     answer_comment_form = AnswerCommentForm()
@@ -167,8 +177,9 @@ def add_answer_comment(answer_id):
     practice_id = Answer.query.filter_by(id=answer_id).one().practice_id
     return redirect(url_for('practice_.practice', practice_id=practice_id, page=1))
 
-#====================================================================
-#删除函数
+
+# ====================================================================
+# 删除函数
 @practice_blueprint_.route('/delete_practice/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_practice(id):
@@ -180,6 +191,7 @@ def delete_practice(id):
         flash("练习已经删除.", category="success")
         return redirect(url_for('practice_.home'))
     abort(403)
+
 
 @practice_blueprint_.route('/delete_answer/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -194,8 +206,9 @@ def delete_answer(id):
         return redirect(url_for('practice_.practice', practice_id=practice_id, page=1))
     abort(403)
 
-#==============================================================
-#几个编辑函数
+
+# ==============================================================
+# 几个编辑函数
 @practice_blueprint_.route('/edit_practice/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_practice(id):
@@ -218,12 +231,13 @@ def edit_practice(id):
         note = get_note()
         not_viewed_inform_num = get_not_viewed_inform_num()
         return render_template('edit_practice.html',
-                                form=form,
-                                practice=practice,
-                                note=note,
-                                not_viewed_inform_num=not_viewed_inform_num
-                                )
+                               form=form,
+                               practice=practice,
+                               note=note,
+                               not_viewed_inform_num=not_viewed_inform_num
+                               )
     abort(403)
+
 
 @practice_blueprint_.route('/edit_answer/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -245,22 +259,23 @@ def edit_answer(id):
         not_viewed_inform_num = get_not_viewed_inform_num()
         flash("回答已经成功提交", category="success")
         return render_template('edit_answer.html',
-                                form=form,
-                                answer=answer,
-                                note=note,
-                                not_viewed_inform_num=not_viewed_inform_num
-                                )
+                               form=form,
+                               answer=answer,
+                               note=note,
+                               not_viewed_inform_num=not_viewed_inform_num
+                               )
     abort(403)
-#================================================================================
+
+
+# ================================================================================
 
 @practice_blueprint_.route('/new_practice', methods=['GET', 'POST'])
 @login_required
-#@poster_permission.require(http_exception=403)
+# @poster_permission.require(http_exception=403)
 def new_practice():
     form = PracticeForm()
 
     if form.validate_on_submit():
-
         new_practice = Practice(form.title.data)
         new_practice.text = form.text.data
         now = datetime.datetime.now()
@@ -272,15 +287,16 @@ def new_practice():
         db.session.add(new_practice)
         db.session.commit()
         flash("练习已经成功提交.", category="success")
-        
+
     not_viewed_inform_num = get_not_viewed_inform_num()
     note = get_note()
     return render_template('new_practice.html',
-                            form=form,
-                            not_viewed_inform_num=not_viewed_inform_num,
-                            note=note)
+                           form=form,
+                           not_viewed_inform_num=not_viewed_inform_num,
+                           note=note)
 
-#==========================
+
+# ==========================
 @practice_blueprint_.route('/alter_practice_attr/<int:id>', methods=['GET', 'POST'])
 @login_required
 @test_builder_permission.require(http_exception=403)
@@ -290,7 +306,7 @@ def alter_practice_attr(id):
     if test_builder_permission.can() or admin_permission.can():
         if form.validate_on_submit():
 
-            #仅仅留下一个置顶
+            # 仅仅留下一个置顶
             if form.is_top.data == True:
                 tops = Practice.query.filter_by(is_top=True).all()
                 for top in tops:
@@ -298,26 +314,26 @@ def alter_practice_attr(id):
                     top.is_qualified = True
                     db.session.add(top)
                 practice.is_top = form.is_top.data
-                #能被置顶的都是通过审核的选项， 故 is_qualified设置为TRUE
-                #因为表单有两个选项，但是模板中供显示在页面供用户选择的只有一个选项
-                #如果不在这里设定为True，将以默认值提交
-                practice.is_qualified = True   
+                # 能被置顶的都是通过审核的选项， 故 is_qualified设置为TRUE
+                # 因为表单有两个选项，但是模板中供显示在页面供用户选择的只有一个选项
+                # 如果不在这里设定为True，将以默认值提交
+                practice.is_qualified = True
                 db.session.add(practice)
 
             if form.is_qualified.data == True:
                 practice.is_qualified = form.is_qualified.data
 
-            
             db.session.commit()
             flash(u"练习属性修改成功", category="success")
             return redirect(url_for(".home"))
-            
-        # not_viewed_inform_num = get_not_viewed_inform_num()
-        # note = get_note()
-        # return render_template('practices.html',
-        #                         form=form,
-        #                         not_viewed_inform_num=not_viewed_inform_num,
-        #                         note=note)
+
+            # not_viewed_inform_num = get_not_viewed_inform_num()
+            # note = get_note()
+            # return render_template('practices.html',
+            #                         form=form,
+            #                         not_viewed_inform_num=not_viewed_inform_num,
+            #                         note=note)
+
 # #===================================================
 
 # @practice_blueprint_.route('/new', methods=['GET', 'POST'])
@@ -338,8 +354,8 @@ def alter_practice_attr(id):
 #         ).one()
 #         db.session.add(new_post)
 #         db.session.commit()
-        
-        
+
+
 #         post = Post.query.filter_by(publish_date=now).one()
 #         new_related_post = RelatedPost()
 #         new_related_post.post_id = post.id
@@ -351,7 +367,7 @@ def alter_practice_attr(id):
 #         db.session.commit()
 #         return redirect(url_for('practice.post', post_id=post.id))
 
-            
+
 #     not_viewed_inform_num = get_not_viewed_inform_num()
 #     note = get_note()
 #     return render_template('new.html',
@@ -368,7 +384,7 @@ def alter_practice_attr(id):
 #     tag = Tag.query.fliter_by(title=tag_name).first_or_404()
 #     posts = tag.posts.order_by(Post.publish_date.desc()).all()
 #     recent, top_tags = sidebar_data()
-   
+
 #     return render_template(
 #         'tag.html',
 #         tag=tag,
@@ -460,7 +476,7 @@ def alter_practice_attr(id):
 #     if permission.can() or admin_permission.can():
 #         form = UserForm()
 
-    
+
 #         if form.validate_on_submit():
 #             user.nick_name = form.nick_name.data
 #             user.class_major = form.class_major.data
@@ -475,7 +491,7 @@ def alter_practice_attr(id):
 #         form.description.data=user.description
 #         note = get_note()
 #         not_viewed_inform_num = get_not_viewed_inform_num()
-        
+
 #         return render_template('user_info_setting.html',
 #                                 form=form,
 #                                 post=post,
@@ -544,7 +560,7 @@ def alter_practice_attr(id):
 #         db.session.commit()
 #         comments = Comment.query.filter_by(post_id=post_id, user_id=current_user.id).all()
 #         if not comments:
- 
+
 #             related_posts = RelatedPost.query.filter_by(
 #                                                         is_commented_only=True,
 #                                                         user=current_user,

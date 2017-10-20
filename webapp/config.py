@@ -9,34 +9,23 @@ class GeneralConfig(object):
 
     ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')    # 默认管理员账号
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin')   # 默认管理员密码
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'root@localhost')  # 默认管理员邮箱
 
-    ADMIN_KEY = ''
+    ADMIN_KEY = 'JUSTFORTEST'
 
     pass
 
 
 class ProductConfig(GeneralConfig):
     DEBUG = False
+
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(path.pardir, 'database.db')
 
 
 
 class DevConfig(GeneralConfig):
-    # CACHE_TYPE = 'simple'
-
     DEBUG = True
+
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(path.pardir, 'database.db')
 
-
-
-    TEST_BUILDER_KEY = "5201314666"
-
-    DEFAULT_KEY = "5201314666"
-
-    SHARING_TOKEN = "5201314666"
-
-    # RECAPTCHA_PUBLIC_KEY = "6LdKkQQTAAAAAEH0GFj7NLg5tGicaoOus7G9Q5Uw"
-    # RECAPTCHA_PRIVATE_KEY = '6LdKkQQTAAAAAMYroksPTJ7pWhobYb88fTAcxcYn'
-
-
-Config = DevConfig
+Config = eval('{}Config'.format(os.environ.get('WEBAPP_ENV', 'dev').capitalize()))
