@@ -21,8 +21,6 @@ roles = db.Table("role_users",
 
 # User对象，能够与数据库中表格对应，还应该具有验证设置密码，验证密码等方法
 class User(db.Model):
-    '''继承于db.Model,类的名字的小写将会是数据库中表的名字
-    User类<-->user表'''
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(255))
     email = db.Column(db.String(255))
@@ -255,16 +253,16 @@ class Note(db.Model):
         return "<Note '{}'>".format(self.text)
 
 
-class SecretKey(db.Model):
+class InviteKey(db.Model):
+    # 邀请码
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(255))
     key_string = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<SecretKey '{}'>".format(self.name)
+        return "<InviteKey '{}'>".format(self.name)
 
         # ==========================
-
 
 # 练习专区
 

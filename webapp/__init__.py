@@ -6,7 +6,7 @@ import re
 from markdown import markdown
 from flask import Flask, redirect, url_for
 
-from webapp.models import db, User, Post, Tag, Comment, Role, Sharing, RelatedPost, Note, SecretKey
+from webapp.models import db, User, Post, Tag, Comment, Role, Sharing, RelatedPost, Note, InviteKey
 
 from webapp.models import Practice, AnswerComment, Answer
 
@@ -129,7 +129,7 @@ def create_app(object_name):
 
     admin.add_view(
         CustomModelView(
-            SecretKey, db.session, category='Models'
+            InviteKey, db.session, category='Models'
         )
     )
 
