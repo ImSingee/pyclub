@@ -1,5 +1,8 @@
 #coding=utf-8
 
+#!/usr/bin/python
+# -*- coding: utf-8-*-
+
 import os, time, datetime 
 from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand
