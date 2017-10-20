@@ -14,7 +14,7 @@ from webapp.controllers.sharing import sharing_blueprint
 from webapp.controllers.practice import practice_blueprint_
 
 from webapp.extensions import (bcrypt,admin)
-from webapp.config import DevConfig
+from webapp.config import Config
 
 from flask_principal import identity_loaded, UserNeed, RoleNeed
 
@@ -72,7 +72,7 @@ def create_app(object_name):
     app = Flask(__name__)
     #配置
     app.config.from_object(object_name)
-    app.config['SECRET_KEY'] = DevConfig.SECRECT_KEY
+    app.config['SECRET_KEY'] = Config.SECRECT_KEY
 
     #初始化数据库与插件
     db.init_app(app)

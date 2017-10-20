@@ -2,32 +2,30 @@
 # Introduction
 This is a webapp powered by __flask__ & __bootstrap__,which is designed for:  
 - **A very very friendly community for newbie**
-- **Enhance communication.Posting questions or sharing views, other members can comment on it, a bit like Tieba**
+- **Enhance communication. Posting questions or sharing views, other members can comment on it, a bit like Tieba**
 
 # Config
-to make WTForm work correctly, we need a secret key.The secret key is a random-like string.
-to generate a random-like string:  
-in bash:
+To make WTForm work correctly, we need a SECRET KEY. The SECRET KEY is a random-like string.
 
-    cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32
-if with mac:
+Generate a random-like string in your Python 3 interpreter:
 
-    cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 32  
-
-if with window, you can use os module  
-    `>>>import os`  
-    `>>>os.urandom(24)`  
+```python
+import os, base64
+n = 24
+print(base64.b32encode(os.urandom(n)).decode('utf-8')[:n])
+```
 
 
-add the string into config.py: 
+And please add the following string into the end of `webapp/config.py`: 
 
-    class DevConfig(Config):
-	    
-	    SECRECT_KEY = ' '  #add here
-	    SQLALCHEMY_TRACK_MODIFICATIONS = True
-	    DEBUG = True
-	    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(path.pardir, 'database.db')
-
+```python
+class DevConfig(Config):
+    
+    SECRECT_KEY = os.environ.get('SECRECT_KEY', 'put your random key here') 
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + path.join(path.pardir, 'database.db')
+```
 
 # Installation
 ## Requirements
