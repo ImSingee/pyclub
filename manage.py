@@ -1,13 +1,7 @@
 # coding=utf-8
 
-<<<<<<< HEAD
 import os, time, datetime
-=======
-#!/usr/bin/python
-# -*- coding: utf-8-*-
 
-import os, time, datetime 
->>>>>>> up/master
 from flask_script import Manager, Server
 from flask_migrate import Migrate, MigrateCommand
 
@@ -284,6 +278,7 @@ def gserver_run(port):
 @manager.command
 def gserver(port=2333):
     gserver_run(port=port)
+
 
 # @manager.command
 # def robot():
