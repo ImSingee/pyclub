@@ -24,7 +24,9 @@ itsdangerous==0.24
 Jinja2==2.9.6
 Mako==1.0.6
 MarkupSafe==1.0
+olefile==0.44
 packaging==16.8
+Pillow==4.3.0
 pycparser==2.17
 pyparsing==2.2.0
 python-editor==1.0.3
@@ -32,7 +34,6 @@ pytz==2017.2
 six==1.10.0
 SQLAlchemy==1.1.9
 tzlocal==1.4
-update==0.4.4
 webassets==0.12.1
 Werkzeug==0.12.1
 WTForms==2.1
