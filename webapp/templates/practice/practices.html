@@ -71,7 +71,7 @@
                     
                     <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=top.id,page=1) }}"><h4>[推荐] {{ top.title }}</a></h4></div>                
                     <div class="panel-body">
-                        {{ top.text | truncate(500) | delete_html() }}
+                        {{ top.text | truncate(500)}}
 
                         <a href="{{ url_for('.practice', practice_id=top.id, page=1) }}">查看>></a>
                     </div>
@@ -97,7 +97,7 @@
 
                     <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id,page=1) }}"><h4> {{ practice.title }}</a></h4></div>                
                     <div class="panel-body">
-                        {{ practice.text | truncate(500) | delete_html() }}
+                        {{ practice.text | truncate(500)  }}
 
                         <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
                     </div>
@@ -157,7 +157,7 @@
                     <div class="panel-heading"><a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}"><h4>{{ practice.title }}</a></h4></div>
 
                     <div class="panel-body">
-                        {{ practice.text | truncate(500) | get_text() }}
+                        {{ practice.text | truncate(500) }}
 
                         <a href="{{ url_for('.practice', practice_id=practice.id, page=1) }}">查看>></a>
                     </div>

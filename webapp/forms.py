@@ -67,7 +67,9 @@ class PostForm(Form):
 
     title = StringField(u'标题', [DataRequired(), Length(max=255)])
 
-    text = TextAreaField(u'文章内容', [DataRequired()])
+    text = TextAreaField(u'内容', [DataRequired()])
+
+    is_published = BooleanField(u"发布？（不勾选只是存为草稿", default=False)
 
  
 

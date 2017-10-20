@@ -14,7 +14,7 @@ from flask_principal import Permission, UserNeed
 
 #===========================================================
 from webapp.models import Practice, AnswerComment, Answer
-
+from markdown import markdown
 #==================================================
 
 
@@ -133,6 +133,9 @@ def practice(practice_id, page=1):
     
     answer_comment_form = AnswerCommentForm()
     answer_comment_form.text.data = u'输入你的评论'
+
+    
+
 
     return render_template(
         'practice.html',
