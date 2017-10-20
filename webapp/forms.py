@@ -69,6 +69,8 @@ class PostForm(Form):
 
     text = TextAreaField(u'内容', [DataRequired()])
 
+    is_published = BooleanField(u"发布？（不勾选只是存为草稿", default=False)
+
  
 
 

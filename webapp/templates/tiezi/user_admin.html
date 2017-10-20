@@ -97,7 +97,7 @@
                 {% for post in posts.items %}
                     <div class="panel panel-info">
                         <div class="panel-heading"><h5>{{ post.title }}</h5></div>
-                        <div class="panel-body">{{ post.text | truncate(500) | safe }}
+                        <div class="panel-body">{{ post.text | truncate(500) }}
                             <a href="{{ url_for('.post', post_id=post.id) }}">Read More>></a>
                         </div>
                         <div class="panel-footer">

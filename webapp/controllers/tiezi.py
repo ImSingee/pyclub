@@ -121,25 +121,25 @@ def home(page=1):
         note=note
     )
 
-@tiezi_blueprint.route('/posts_renew')
-@tiezi_blueprint.route('/posts_renew/<int:page>')
-def posts_renew(page=1):
-    #更据文章（问题）动态更新（新文章或新的问题），类似博客
-    posts = Post.query.order_by(Post.publish_date.desc()).paginate(page, 10)
-    # posts = Post.query.order_by(Post.dynamic_date.desc()).paginate(page, 10)
-    recent, top_tags = sidebar_data()
-    not_viewed_inform_num = get_not_viewed_inform_num()
-    note = get_note()
+# @tiezi_blueprint.route('/posts_renew')
+# @tiezi_blueprint.route('/posts_renew/<int:page>')
+# def posts_renew(page=1):
+#     #更据文章（问题）动态更新（新文章或新的问题），类似博客
+#     posts = Post.query.order_by(Post.publish_date.desc()).paginate(page, 10)
+#     # posts = Post.query.order_by(Post.dynamic_date.desc()).paginate(page, 10)
+#     recent, top_tags = sidebar_data()
+#     not_viewed_inform_num = get_not_viewed_inform_num()
+#     note = get_note()
 
-    return render_template(
-        'latest.html',
-        posts=posts,
-        recent=recent,
-        top_tags=top_tags,
-        not_viewed_inform_num=not_viewed_inform_num,
-        note=note,
-        Comment=Comment
-    )
+#     return render_template(
+#         'latest.html',
+#         posts=posts,
+#         recent=recent,
+#         top_tags=top_tags,
+#         not_viewed_inform_num=not_viewed_inform_num,
+#         note=note,
+#         Comment=Comment
+#     )
 
 
 
@@ -213,15 +213,16 @@ def new_post():
 
         new_post = Post(form.title.data)
         new_post.text = form.text.data
+
+        new_post.is_published = form.is_published.data
         now = datetime.datetime.now()
         new_post.publish_date = now
         new_post.dynamic_date = now
         new_post.user = User.query.filter_by(
             username=current_user.username
         ).one()
-        new_post.is_published = True
+
         db.session.add(new_post)
-        db.session.commit()
         
         
         post = Post.query.filter_by(publish_date=now).one()
@@ -233,7 +234,16 @@ def new_post():
         new_related_post.is_commented_only = False
         db.session.add(new_related_post)
         db.session.commit()
-        return redirect(url_for('tiezi.post', post_id=post.id))
+
+        if new_post.is_published == True:
+            post_satus = u"已经发布"
+        else:
+            post_satus = u"已经存为草稿"
+
+        flash(u"保存成功，{}".format(post_satus), category="success")
+        return redirect(url_for('.edit_post', id=new_post.id))
+
+        # return redirect(url_for('tiezi.post', post_id=post.id))
 
             
     not_viewed_inform_num = get_not_viewed_inform_num()
@@ -471,14 +481,23 @@ def edit_post(id):
         if form.validate_on_submit():
             post.title = form.title.data
             post.text = form.text.data
+            post.is_published = form.is_published.data
             post.publish_date = datetime.datetime.now()
 
             db.session.add(post)
             db.session.commit()
-            flash(u"修改成功", category="success")
+            if post.is_published == True:
+                post_satus = u"已经发布"
+            else:
+                post_satus = u"已经存为草稿"
+
+            flash(u"修改成功，{}".format(post_satus), category="success")            
+            
 
             return redirect(url_for('.edit_post', id=post.id))
         form.text.data = post.text
+        form.title.data = post.title
+        form.is_published.data = post.is_published
         note = get_note()
         not_viewed_inform_num = get_not_viewed_inform_num()
         return render_template('edit.html',
