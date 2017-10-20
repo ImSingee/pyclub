@@ -105,8 +105,8 @@ def home(page=1):
 
     #posts = Post.query.order_by(Post.publish_date.desc()).paginate(page, 10)
     #更据文章或者评论的动态更新，类似学校论坛
-    tops = Post.query.filter_by(is_top=True).order_by(Post.dynamic_date.desc()).paginate(1,2)
-    posts = Post.query.filter_by(is_top=False).order_by(Post.dynamic_date.desc()).paginate(page, 10)
+    tops = Post.query.filter_by(is_top=True, is_published=True).order_by(Post.dynamic_date.desc()).paginate(1,2)
+    posts = Post.query.filter_by(is_top=False, is_published=True).order_by(Post.dynamic_date.desc()).paginate(page, 10)
     recent, top_tags = sidebar_data()
     not_viewed_inform_num = get_not_viewed_inform_num()
     note = get_note()
@@ -143,39 +143,40 @@ def posts_renew(page=1):
 
 
 
-@tiezi_blueprint.route('/new_tiezi', methods=['GET', 'POST'])
-@login_required
-#@poster_permission.require(http_exception=403)
-def new_tiezi():
-    form = PostForm()
+# @tiezi_blueprint.route('/new_tiezi', methods=['GET', 'POST'])
+# @login_required
+# #@poster_permission.require(http_exception=403)
+# def new_tiezi():
+#     form = PostForm()
 
-    if form.validate_on_submit():
+#     if form.validate_on_submit():
 
-        new_post = Post(form.title.data)
-        new_post.text = form.text.data
-        now = datetime.datetime.now()
-        new_post.publish_date = now
-        new_post.dynamic_date = now
-        new_post.user = User.query.filter_by(
-            username=current_user.username
-        ).one()
-        db.session.add(new_post)
-        db.session.commit()
+#         new_post = Post(form.title.data)
+#         new_post.text = form.text.data
+#         now = datetime.datetime.now()
+#         new_post.publish_date = now
+#         new_post.dynamic_date = now
+#         new_post.user = User.query.filter_by(
+#             username=current_user.username
+#         ).one()
+#         new_post.is_published = True
+#         db.session.add(new_post)
+#         db.session.commit()
 
-        post = Post.query.filter_by(publish_date=now).one()
-        new_related_post = RelatedPost()
-        new_related_post.post_id = post.id
-        new_related_post.user_id = post.user_id
-        new_related_post.viewed_date = now
-        db.session.add(new_related_post)
-        db.session.commit()
+#         post = Post.query.filter_by(publish_date=now).one()
+#         new_related_post = RelatedPost()
+#         new_related_post.post_id = post.id
+#         new_related_post.user_id = post.user_id
+#         new_related_post.viewed_date = now
+#         db.session.add(new_related_post)
+#         db.session.commit()
         
-    not_viewed_inform_num = get_not_viewed_inform_num()
-    note = get_note()
-    return render_template('new_tiezi.html',
-                            form=form,
-                            not_viewed_inform_num=not_viewed_inform_num,
-                            note=note)
+#     not_viewed_inform_num = get_not_viewed_inform_num()
+#     note = get_note()
+#     return render_template('new_tiezi.html',
+#                             form=form,
+#                             not_viewed_inform_num=not_viewed_inform_num,
+#                             note=note)
 
 
 #===================================================
@@ -218,6 +219,7 @@ def new_post():
         new_post.user = User.query.filter_by(
             username=current_user.username
         ).one()
+        new_post.is_published = True
         db.session.add(new_post)
         db.session.commit()
         
@@ -473,6 +475,7 @@ def edit_post(id):
 
             db.session.add(post)
             db.session.commit()
+            flash(u"修改成功", category="success")
 
             return redirect(url_for('.edit_post', id=post.id))
         form.text.data = post.text

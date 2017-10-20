@@ -141,7 +141,8 @@ tags = db.Table('post_tags',
 class Post(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(255))
-    is_top = db.Column(db.Boolean()) 
+    is_top = db.Column(db.Boolean())
+    is_published = db.Column(db.Boolean()) 
     text = db.Column(db.Text())
     publish_date = db.Column(db.DateTime())
 
@@ -170,6 +171,7 @@ class Post(db.Model):
     def __init__(self, title):
         self.title = title
         self.is_top = False
+        self.is_published = False
 
 
     def __repr__(self):

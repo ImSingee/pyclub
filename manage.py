@@ -239,6 +239,7 @@ def setup_db_real():
     new_post.text = "THIS IS the first text published by admin"
     new_post.dynamic_date = datetime.datetime.now()
     new_post.published_date = datetime.datetime.now()
+    new_post.is_published = True
     db.session.add(new_post)
     #第一篇置顶置顶文章
     new_post = Post(u"第一篇置顶文章")
@@ -247,6 +248,7 @@ def setup_db_real():
     new_post.dynamic_date = datetime.datetime.now()
     new_post.published_date = datetime.datetime.now()
     new_post.is_top = True
+    new_post.is_published = True
     db.session.add(new_post)
     #第一篇练习
     new_pracice = Practice("Practice{}".format(1))
