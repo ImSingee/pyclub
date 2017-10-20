@@ -102,7 +102,7 @@ class RegisterForm(Form):
     confirm = PasswordField('确认密码',
                             [DataRequired(),
                              EqualTo('password')])
-    key = PasswordField(u'邀请码', [DataRequired(), Length(max=255)])
+    key = StringField(u'邀请码', [DataRequired(), Length(max=255)])
 
     # recaptcha = RecaptchaField()
     # verify_code = StringField(u'验证码',[DataRequired(),Length(max=255)])
