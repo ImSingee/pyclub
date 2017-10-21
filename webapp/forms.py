@@ -123,8 +123,8 @@ class RegisterForm(Form):
             )
             return False
         # 默认角色邀请码 检查
-        key_string = InviteKey.query.filter_by(name="default_key").first().key_string
-        if self.key.data != key_string:
+        key_exits = InviteKey.query.filter_by(name="default_key", key_string=self.key.data)
+        if not key_exits:
             self.key.errors.append(
                 u"邀请码不正确→_→"
             )
