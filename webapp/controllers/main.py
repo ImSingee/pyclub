@@ -1,4 +1,3 @@
-
 import datetime
 from flask import Blueprint, render_template
 
@@ -16,22 +15,23 @@ from flask_principal import (
     Identity,
     AnonymousIdentity,
     identity_changed
-    )
+)
 
 
-#=========================================================
+# =========================================================
 
 
 def get_not_viewed_inform_num():
     try:
         if current_user.username:
             not_viewed_posts = RelatedPost.query.filter_by(is_viewed=False,
-                                                         user_id=current_user.id).all()
+                                                           user_id=current_user.id).all()
             return len(not_viewed_posts)
         else:
             return None
     except:
         return None
+
 
 def get_note():
     try:
@@ -44,7 +44,9 @@ def get_note():
         db.session.add(note)
         db.session.commit()
         get_note()
-#===============================
+
+
+# ===============================
 
 
 main_blueprint = Blueprint(
@@ -53,20 +55,21 @@ main_blueprint = Blueprint(
     template_folder=path.join(path.pardir, 'templates', 'main'),
     static_folder=path.join(path.pardir, 'static'),
     url_prefix="/main"
-    )
+)
 
-#================================
+
+# ================================
 
 @main_blueprint.route('/')
 def index():
-    return redirect(url_for('tiezi.home'))
+    return redirect(url_for('practice_.home'))
+
 
 # #=========================================
 
 
 @main_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
-
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -76,57 +79,62 @@ def login():
         identity_changed.send(
             current_app._get_current_object(),
             identity=Identity(user.id)
-            )
-        #应用session将username写入cookie
+        )
+        # 应用session将username写入cookie
         session['username'] = form.username.data
         flash("You have been logged in.", category="success")
 
         return redirect(url_for("tiezi.home"))
     return render_template('login.html',
-                              form=form,
-                              not_viewed_inform_num = get_not_viewed_inform_num(),
-                              note=get_note())
-#====================================================
+                           form=form,
+                           not_viewed_inform_num=get_not_viewed_inform_num(),
+                           note=get_note())
+
+
+# ====================================================
 
 @main_blueprint.route('/logout', methods=['GET', 'POST'])
 def logout():
-    #从cookies中去除username
+    # 从cookies中去除username
     # session.pop('username', None)
     logout_user()
     identity_changed.send(
         current_app._get_current_object(),
         identity=AnonymousIdentity()
-        )
+    )
     flash("you have been logged out.", category="success")
     return redirect(url_for('.login'))
-    #或者直接logout
-#============================================================
+    # 或者直接logout
+
+
+# ============================================================
 
 
 # @main_blueprint.route('/register', methods=['GET', 'Post'])
 # def register():
 #     form = RegisterForm()
 #     if form.validate_on_submit():
-        # new_user = User(form.username.data)
+# new_user = User(form.username.data)
 
-        # new_user.set_password(form.password.data)
-        # new_user.blog_addr = 'http://'
-        # new_user.github_addr = 'https://github.com/'
+# new_user.set_password(form.password.data)
+# new_user.blog_addr = 'http://'
+# new_user.github_addr = 'https://github.com/'
 
-        # db.session.add(new_user)
-        # db.session.commit()
+# db.session.add(new_user)
+# db.session.commit()
 
-        # flash("Your user has been careted please login", category="success")
-        # return redirect(url_for('.login'))
+# flash("Your user has been careted please login", category="success")
+# return redirect(url_for('.login'))
 
-    # return render_template('register.html',
-    #                          form=form,
-    #                          not_viewed_inform_num = get_not_viewed_inform_num(),
-    #                          note=get_note())
-#================================================================================
+# return render_template('register.html',
+#                          form=form,
+#                          not_viewed_inform_num = get_not_viewed_inform_num(),
+#                          note=get_note())
+# ================================================================================
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 import random
+
 
 # 随机字母:
 def rndChar():
@@ -137,13 +145,13 @@ def rndChar():
 def rndColor():
     return (random.randint(64, 255), random.randint(64, 255), random.randint(64, 255))
 
+
 # 随机颜色2:
 def rndColor2():
     return (random.randint(32, 127), random.randint(32, 127), random.randint(32, 127))
 
 
 def generate_verification_code():
-
     # 240 x 60:
     width = 60 * 4
     height = 60
@@ -169,7 +177,7 @@ def generate_verification_code():
     image_path = path.join('.', 'webapp', 'static', 'image', 'code', 'code_img.jpg')
     image.save(image_path, 'jpeg')
     return image_path, strings
-    
+
 
 # import cStringIO
 #     tmps = cStringIO.StringIO()
@@ -183,8 +191,8 @@ def generate_verification_code():
 #  <img id="verficode" src="./verficode" onclick="window.location.reload()">
 #  <img id="verficode" src="./verficode" onclick="this.src='./verficode?d='+Math.random();" />
 
-#==============================================================================================
-#需要验证码的注册
+# ==============================================================================================
+# 需要验证码的注册
 # @main_blueprint.route('/register', methods=['GET', 'Post'])
 # def register():
 #     form = RegisterForm()
@@ -243,13 +251,13 @@ def register():
             db.session.rollback()
             flash(u'注册失败')
             return render_template('register.html',
-                        form=form,
-                        not_viewed_inform_num = get_not_viewed_inform_num(),
-                        note=get_note())
+                                   form=form,
+                                   not_viewed_inform_num=get_not_viewed_inform_num(),
+                                   note=get_note())
     return render_template('register.html',
-                        form=form,
-                        not_viewed_inform_num = get_not_viewed_inform_num(),
-                        note=get_note())
+                           form=form,
+                           not_viewed_inform_num=get_not_viewed_inform_num(),
+                           note=get_note())
 
 
 @main_blueprint.route('/role_activate/<string:role_name>', methods=['GET', 'POST'])
@@ -265,31 +273,31 @@ def role_activate(role_name):
             user.roles.append(role)
             db.session.add(user)
             db.session.commit()
-            flash("Congratulations!你已经成为了{}".format(role_name), category="success")       
+            flash("Congratulations!你已经成为了{}".format(role_name), category="success")
         return redirect(url_for('practice_.home'))
 
     return render_template('role_activate.html',
-                            form=form,
-                            role_name=role_name,
-                            not_viewed_inform_num = get_not_viewed_inform_num(),
-                            note=get_note())
+                           form=form,
+                           role_name=role_name,
+                           not_viewed_inform_num=get_not_viewed_inform_num(),
+                           note=get_note())
 
-# @main_blueprint.route('/admin_register', methods=['GET', 'Post'])
-# def admin_register():
-#     form = AdminRegisterForm()
-#     if form.validate_on_submit():
-#         new_user = User(form.username.data)
+    # @main_blueprint.route('/admin_register', methods=['GET', 'Post'])
+    # def admin_register():
+    #     form = AdminRegisterForm()
+    #     if form.validate_on_submit():
+    #         new_user = User(form.username.data)
 
-#         new_user.set_password(form.password.data)
-#         admin = Role.query.filter_by(name="admin").one()
-#         new_user.roles.append(admin)
-#         db.session.add(new_user)
-#         db.session.commit()
+    #         new_user.set_password(form.password.data)
+    #         admin = Role.query.filter_by(name="admin").one()
+    #         new_user.roles.append(admin)
+    #         db.session.add(new_user)
+    #         db.session.commit()
 
-#         flash("Your user has been careted as administrator please login", category="success")
-#         return redirect(url_for('.login'))
+    #         flash("Your user has been careted as administrator please login", category="success")
+    #         return redirect(url_for('.login'))
 
-#     return render_template('admin_register.html',
-#                             form=form,
-#                             not_viewed_inform_num = get_not_viewed_inform_num(),
-#                             note=get_note())
+    #     return render_template('admin_register.html',
+    #                             form=form,
+    #                             not_viewed_inform_num = get_not_viewed_inform_num(),
+    #                             note=get_note())
