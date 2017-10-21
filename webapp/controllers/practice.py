@@ -4,7 +4,7 @@ import datetime
 from os import path
 from sqlalchemy import func
 from flask import render_template, Blueprint, flash
-from webapp.models import db, Post, Tag, Comment, User, tags, Note
+from webapp.models import db, Post, Tag, Comment, User, tags, Note, RelatedPost
 from webapp.forms import AnswerForm, PracticeForm, AnswerCommentForm, PracticeAttrForm
 from flask import redirect, url_for
 from flask import g, session, abort
@@ -16,7 +16,6 @@ from sqlalchemy.orm.exc import NoResultFound
 
 # ===========================================================
 from webapp.models import Practice, AnswerComment, Answer
-from markdown import markdown
 
 
 # ==================================================

@@ -62,7 +62,7 @@ class PostForm(Form):
 
     text = TextAreaField(u'内容', [DataRequired()])
 
-    is_published = BooleanField(u"发布？（不勾选只是存为草稿", default=False)
+    is_published = BooleanField(u"发布？（不勾选只是存为草稿）", default=False)
 
 
 class LoginForm(Form):
@@ -123,8 +123,8 @@ class RegisterForm(Form):
             )
             return False
         # 默认角色邀请码 检查
-        key_string = InviteKey.query.filter_by(name="default_key").first().key_string
-        if self.key.data != key_string:
+        key_exists = InviteKey.query.filter_by(name="default_key", key_string=self.key.data).all()
+        if not key_exists:
             self.key.errors.append(
                 u"邀请码不正确→_→"
             )
@@ -149,6 +149,9 @@ class RoleActivateForm(Form):
         # 角色名 和 角色对应邀请码的名字一致，可以用角色名查找对应对应邀请码
         print(self.role_name)
         self.key_name = "{}_key".format(self.role_name)
+
+        print(self.key_name)
+        print(self.key_data)
 
         key_string = InviteKey.query.filter_by(name=self.key_name).first().key_string
         if self.key.data != key_string:
