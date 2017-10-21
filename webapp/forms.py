@@ -123,8 +123,8 @@ class RegisterForm(Form):
             )
             return False
         # 默认角色邀请码 检查
-        key_exits = InviteKey.query.filter_by(name="default_key", key_string=self.key.data)
-        if not key_exits:
+        key_exists = InviteKey.query.filter_by(name="default_key", key_string=self.key.data).all()
+        if not key_exists:
             self.key.errors.append(
                 u"邀请码不正确→_→"
             )
@@ -149,6 +149,9 @@ class RoleActivateForm(Form):
         # 角色名 和 角色对应邀请码的名字一致，可以用角色名查找对应对应邀请码
         print(self.role_name)
         self.key_name = "{}_key".format(self.role_name)
+
+        print(self.key_name)
+        print(self.key_data)
 
         key_string = InviteKey.query.filter_by(name=self.key_name).first().key_string
         if self.key.data != key_string:

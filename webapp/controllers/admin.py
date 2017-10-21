@@ -22,6 +22,8 @@ class CustomView(BaseView):
 
 
 class CustomModelView(ModelView):
+    @login_required
+    @admin_permission.require(http_exception=403)
     def is_accessible(self):
         return current_user.is_authenticated() and admin_permission.can()
 
